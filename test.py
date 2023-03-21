@@ -15,8 +15,9 @@ utils = Utils()  # utils function
 
 # from baseline.PyOD import PYOD
 from baseline.PyOD import PYOD
-from baseline.GANomaly.run import GANomaly
-from baseline.Supervised import supervised
+# from baseline.GANomaly.run import GANomaly
+# from baseline.Supervised import supervised
+
 # from baseline.FTTransformer.run import FTTransformer
 # from baseline.FEAWAD.run import FEAWAD
 # from baseline.REPEN.run import REPEN
@@ -27,8 +28,8 @@ dataset_list = sorted(dataset_list)
 
 # model_dict = {'FEAWAD':FEAWAD,'GANomaly': GANomaly}
 # model_dict = {'XGBOD': PYOD, 'GANomaly': GANomaly}
-# model_dict = {'ECOD': PYOD,'COPOD': PYOD} # WORKS
-model_dict = {'DeepSVDD': PYOD}
+model_dict = {'ECOD': PYOD, 'COPOD': PYOD, 'DeepSVDD': PYOD}  # WORKS
+# model_dict = {D}
 # save the results
 df_AUCROC = pd.DataFrame(data = None, index = dataset_list, columns = model_dict.keys())
 df_AUCPR = pd.DataFrame(data = None, index = dataset_list, columns = model_dict.keys())
@@ -43,14 +44,14 @@ for i, dataset in enumerate(dataset_list):
     noise_type: inject data noises for testing model robustness, can be duplicated_anomalies, irrelevant_features or label_contamination
     '''
     print("\n\n")
-    print(f"#{i} : Dataset Name: {dataset}")
+    print(f"#{i}/{len(dataset_list)} : Dataset Name: {dataset}")
     # import the dataset
     datagenerator.dataset = dataset  # specify the dataset name
     data = datagenerator.generator(la = -1, realistic_synthetic_mode = None,
                                    noise_type = None)  # only 0% labeled anomalies are available
 
-    for name, clf in model_dict.items():
-        print("model:", name)
+    for j, (name, clf) in enumerate(model_dict.items()):
+        print(f"\t#{j}/{len(model_dict)}    model: {name}")
         # model initialization
         clf = clf(seed = seed, model_name = name)
 
@@ -72,7 +73,8 @@ for i, dataset in enumerate(dataset_list):
 
 print(df_AUCROC)
 print(df_AUCPR)
-
+print(f"Avg score:\n\tAUCROC:\n{df_AUCROC.mean().to_string()}\n\tAUCPR:\n{df_AUCPR.mean().to_string()}")
+# firzt Semi supervised
 # print(df_AUCROC)
 # print(df_AUCPR)
 # 0.3 test size
@@ -134,4 +136,3 @@ print(df_AUCPR)
 # amazon    0.516538  0.535657
 # imdb      0.462225  0.489265
 # yelp      0.546601  0.566341
-
