@@ -240,7 +240,9 @@ class DataGenerator():
             anomaly_ind = np.where(y == 1)[0]
             inxs = np.array(range(len(y)))
             un_anomalies_ind = np.setdiff1d(inxs, anomaly_ind)
-            test_ind = np.random.choice(un_anomalies_ind, round(self.test_size * len(un_anomalies_ind)),
+            self.test_size=len(anomaly_ind)
+            # Select N test samples from the normal data when N = number of anomalies
+            test_ind = np.random.choice(un_anomalies_ind, self.test_size,
                                         replace = False)
             train_ind = np.setdiff1d(un_anomalies_ind, test_ind)
 
