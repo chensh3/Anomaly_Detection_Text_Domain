@@ -3,17 +3,17 @@ import numpy as np
 from scipy.spatial.distance import hamming
 import itertools
 
-data = pd.read_json("News_Category_Dataset_v3.json", lines = True)
-data = data[["headline", "category"]]
-data.category = data.category.str.lower()
+df = pd.read_json("News_Category_Dataset_v3.json", lines = True)
+df = df[["headline", "category"]]
+df.category = df.category.str.lower()
 
-data.loc[(data.category == "the worldpost") | (data.category == "worldpost"), 'category'] = "world news"
-data.loc[(data.category == "style & beauty"), 'category'] = "style"
-data.loc[(data.category == "arts") | (data.category == "culture & arts"), 'category'] = "arts & culture"
-data.loc[(data.category == "parents"), 'category'] = "parenting"
-data.loc[(data.category == "taste"), 'category'] = "food & drink"
-data.loc[(data.category == "green"), 'category'] = "environment"
-data.loc[(data.category == "healthy living"), 'category'] = "healthy living tips"
+df.loc[(df.category == "the worldpost") | (df.category == "worldpost"), 'category'] = "world news"
+df.loc[(df.category == "style & beauty"), 'category'] = "style"
+df.loc[(df.category == "arts") | (df.category == "culture & arts"), 'category'] = "arts & culture"
+df.loc[(df.category == "parents"), 'category'] = "parenting"
+df.loc[(df.category == "taste"), 'category'] = "food & drink"
+df.loc[(df.category == "green"), 'category'] = "environment"
+df.loc[(df.category == "healthy living"), 'category'] = "healthy living tips"
 
 vector_to_class = {
     129: [["politics", "sports"]],
@@ -54,44 +54,105 @@ results = [[], [], [], [], [], [], [], [], []]
 for per in permutations:
     results[int(hamming(list(str(per[0])), list(str(per[1]))) * 9)].append(per)
 
+#BERT
+
+# from bert import bert_embed
+# print(" start embed")
+# embeding=bert_embed(df.headline.to_list())
+# print("stop embed")
+# df["embed"]=embeding
+
 
 easy = results[0:2]
 medium = results[3:5]
 hard = results[7:]
-easy_df=pd.DataFrame(columns=data.columns)
-medium_df=pd.DataFrame(columns=data.columns)
-hard_df=pd.DataFrame(columns=data.columns)
-df=[easy_df,medium_df,hard_df]
+
+anomaly=pd.DataFrame(columns=df.columns)
 
 # for i,type_data in enumerate([easy,medium,hard]):
 #     for diff in type_data:
-diff=easy[0]
-if diff[0][0]!=diff[0][1]:
-    classes=vectors.loc[(vectors.bin==diff[0][0]) | (vectors.bin==diff[0][1]),"classes" ].values
-    classes=np.hstack(classes)[0]
-    anomaly = data.loc[(data.category==classes[0]) | (data.category==classes[1]),:]
-    anomaly.loc[:,"label"] =np.ones(len(anomaly))
-    normal = data.loc[(data.category!=classes[0]) | (data.category!=classes[1]),:]
-    normal.loc[:,"label"]  = np.zeros(len(normal))
-    noraml_to_test=normal.sample(len(anomaly))
-    # anomaly["label"] = anomaly.category.apply(lambda x: 1 if x == classes[0] or x == classes[1] else 0)
 
-    X_test = anomaly.append(noraml_to_test)
-    X_train = normal.drop(noraml_to_test.index)
-    y_train = X_train.loc[:,["label"]]
-    y_test = X_test.loc[:,["label"]]
-    X_test = X_test.loc[:,["headline","category"]]
-    X_train = X_train.loc[:,["headline","category"]]
+for i, diff in enumerate(easy):
+    data=df.copy()
+    anomaly = pd.DataFrame(columns=data.columns)
+    if diff[1][0]!=diff[1][1]:
+        classes=vectors.loc[(vectors.bin==diff[1][0]) | (vectors.bin==diff[1][1]),"classes" ].values
+    else:
+        classes=vectors.loc[(vectors.bin==diff[1][0]),"classes" ].values
 
-    dataset={'X_train':X_train, 'y_train':y_train, 'X_test':X_test, 'y_test':y_test}
-    np.save(f"{diff}_{classes}.npz", dataset)
+        classes=np.hstack(classes)[0]
+        for class_1 in classes :
 
+            anomaly = anomaly.append(data.loc[(data.category == class_1), :])
+        anomaly.loc[:,"label"] =np.ones(len(anomaly))
+        normal = data.drop(anomaly.index)
+        normal.loc[:,"label"]  = np.zeros(len(normal))
+        noraml_to_test=normal.sample(len(anomaly))
+        # anomaly["label"] = anomaly.category.apply(lambda x: 1 if x == classes[0] or x == classes[1] else 0)
 
+        X_test = anomaly.append(noraml_to_test)
+        X_train = normal.drop(noraml_to_test.index)
+        y_train = X_train.loc[:,["label"]]
+        y_test = X_test.loc[:,["label"]]
+        X_test = X_test.loc[:,["embed"]]
+        X_train = X_train.loc[:,["embed"]]
 
+        dataset={'X_train':X_train, 'y_train':y_train, 'X_test':X_test, 'y_test':y_test}
+        np.save(f"news_data/easy_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
 
+for i,diff in enumerate(medium):
+    data = df.copy()
+    anomaly = pd.DataFrame(columns=data.columns)
+    if diff[1][0] != diff[1][1]:
+        classes = vectors.loc[(vectors.bin == diff[1][0]) | (vectors.bin == diff[1][1]), "classes"].values
+    else:
+        classes = vectors.loc[(vectors.bin == diff[1][0]), "classes"].values
 
+        classes = np.hstack(classes)[0]
+        for class_1 in classes:
+            anomaly = anomaly.append(data.loc[(data.category == class_1), :])
+        anomaly.loc[:, "label"] = np.ones(len(anomaly))
+        normal = data.drop(anomaly.index)
+        normal.loc[:, "label"] = np.zeros(len(normal))
+        noraml_to_test = normal.sample(len(anomaly))
+        # anomaly["label"] = anomaly.category.apply(lambda x: 1 if x == classes[0] or x == classes[1] else 0)
 
+        X_test = anomaly.append(noraml_to_test)
+        X_train = normal.drop(noraml_to_test.index)
+        y_train = X_train.loc[:, ["label"]]
+        y_test = X_test.loc[:, ["label"]]
+        X_test = X_test.loc[:, ["embed"]]
+        X_train = X_train.loc[:, ["embed"]]
 
+        dataset = {'X_train': X_train, 'y_train': y_train, 'X_test': X_test, 'y_test': y_test}
+        np.save(f"news_data/medium_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
+
+for i,diff in enumerate(hard):
+    data = df.copy()
+    anomaly = pd.DataFrame(columns=data.columns)
+    if diff[1][0] != diff[1][1]:
+        classes = vectors.loc[(vectors.bin == diff[1][0]) | (vectors.bin == diff[1][1]), "classes"].values
+    else:
+        classes = vectors.loc[(vectors.bin == diff[1][0]), "classes"].values
+
+        classes = np.hstack(classes)[0]
+        for class_1 in classes:
+            anomaly = anomaly.append(data.loc[(data.category == class_1), :])
+        anomaly.loc[:, "label"] = np.ones(len(anomaly))
+        normal = data.drop(anomaly.index)
+        normal.loc[:, "label"] = np.zeros(len(normal))
+        noraml_to_test = normal.sample(len(anomaly))
+        # anomaly["label"] = anomaly.category.apply(lambda x: 1 if x == classes[0] or x == classes[1] else 0)
+
+        X_test = anomaly.append(noraml_to_test)
+        X_train = normal.drop(noraml_to_test.index)
+        y_train = X_train.loc[:, ["label"]]
+        y_test = X_test.loc[:, ["label"]]
+        X_test = X_test.loc[:, ["embed"]]
+        X_train = X_train.loc[:, ["embed"]]
+
+        dataset = {'X_train': X_train, 'y_train': y_train, 'X_test': X_test, 'y_test': y_test}
+        np.save(f"news_data/hard_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
 
 
 
