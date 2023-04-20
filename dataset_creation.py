@@ -58,9 +58,33 @@ for per in permutations:
 easy = results[0:2]
 medium = results[3:5]
 hard = results[7:]
+easy_df=pd.DataFrame(columns=data.columns)
+medium_df=pd.DataFrame(columns=data.columns)
+hard_df=pd.DataFrame(columns=data.columns)
+df=[easy_df,medium_df,hard_df]
 
+# for i,type_data in enumerate([easy,medium,hard]):
+#     for diff in type_data:
+diff=easy[0]
+if diff[0][0]!=diff[0][1]:
+    classes=vectors.loc[(vectors.bin==diff[0][0]) | (vectors.bin==diff[0][1]),"classes" ].values
+    classes=np.hstack(classes)[0]
+    anomaly = data.loc[(data.category==classes[0]) | (data.category==classes[1]),:]
+    anomaly.loc[:,"label"] =np.ones(len(anomaly))
+    normal = data.loc[(data.category!=classes[0]) | (data.category!=classes[1]),:]
+    normal.loc[:,"label"]  = np.zeros(len(normal))
+    noraml_to_test=normal.sample(len(anomaly))
+    # anomaly["label"] = anomaly.category.apply(lambda x: 1 if x == classes[0] or x == classes[1] else 0)
 
+    X_test = anomaly.append(noraml_to_test)
+    X_train = normal.drop(noraml_to_test.index)
+    y_train = X_train.loc[:,["label"]]
+    y_test = X_test.loc[:,["label"]]
+    X_test = X_test.loc[:,["headline","category"]]
+    X_train = X_train.loc[:,["headline","category"]]
 
+    dataset={'X_train':X_train, 'y_train':y_train, 'X_test':X_test, 'y_test':y_test}
+    np.save(f"{diff}_{classes}.npz", dataset)
 
 
 
