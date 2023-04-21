@@ -1,19 +1,22 @@
 import torch
 # import transformers
 from transformers import BertTokenizer, BertModel
-from tqdm import tqdm
+from tqdm.auto import tqdm
+print("start bert.py")
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+print("tokonizer ready")
 model = BertModel.from_pretrained('bert-base-uncased',
                                   output_hidden_states=True,  # Whether the model returns all hidden-states.
                                   )
-
+print("model started")
 # Put the model in "evaluation" mode, meaning feed-forward operation.
 model.eval()
 
-
+print("model evaluated")
 def bert_embed(data_raw):
+    print("start function bert")
     encoded_inputs = tokenizer(data_raw)
-
+    print("end words tokinizer")
     storage = []  # list to store all embeddings
     output = []  # list to store all embeddings
     for i, text in tqdm(enumerate(encoded_inputs['input_ids'])):

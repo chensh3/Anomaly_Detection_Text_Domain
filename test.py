@@ -22,13 +22,13 @@ from baseline.PyOD import PYOD
 # from baseline.FEAWAD.run import FEAWAD
 # from baseline.REPEN.run import REPEN
 # dataset and model list / dict
-dataset_list = [x.split(".npz")[0] for x in os.listdir('datasets/NLP_by_BERT')]
+dataset_list = [x.split(".npz")[0] for x in os.listdir('D:/anomaly_data')]
 dataset_list = sorted(dataset_list)
 # dataset_list=['20news_5']
 
 # model_dict = {'FEAWAD':FEAWAD,'GANomaly': GANomaly}
 # model_dict = {'XGBOD': PYOD, 'GANomaly': GANomaly}
-model_dict = {'ECOD': PYOD, 'COPOD': PYOD, 'DeepSVDD': PYOD}  # WORKS
+model_dict = {'COPOD': PYOD, 'DeepSVDD': PYOD}  # WORKS
 # model_dict = {D}
 # save the results
 df_AUCROC = pd.DataFrame(data = None, index = dataset_list, columns = model_dict.keys())
@@ -73,6 +73,8 @@ for i, dataset in enumerate(dataset_list):
 
 print(df_AUCROC)
 print(df_AUCPR)
+df_AUCPR.to_pickle("results_aucpr.pickle")
+df_AUCROC.to_pickle("results_aucroc.pickle")
 print(f"Avg score:\n\tAUCROC:\n{df_AUCROC.mean().to_string()}\n\tAUCPR:\n{df_AUCPR.mean().to_string()}")
 # firzt Semi supervised
 # print(df_AUCROC)

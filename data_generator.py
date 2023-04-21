@@ -229,10 +229,13 @@ class DataGenerator():
             elif self.dataset in self.dataset_list_nlp:
                 data = np.load(os.path.join('datasets', 'NLP_by_BERT', self.dataset + '.npz'), allow_pickle = True)
             else:
-                raise NotImplementedError
+                data = np.load(os.path.join('D:/', 'anomaly_data', self.dataset + '.npz.npy'), allow_pickle = True)
 
-            X = data['X']
-            y = data['y']
+                X_train = data["X_train"]
+                X_test = data["X_test"]
+                y_train = data["y_train"]
+                y_test = data["y_test"]
+
 
         # change of chen
         if la == -1:
