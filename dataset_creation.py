@@ -110,5 +110,5 @@ for i in range(9):
             dataset = {'X_train': X_train, 'y_train': y_train, 'X_test': X_test, 'y_test': y_test}
             # np.save(f"news_data/easy_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
             # np.save(f"news_data/medium_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
-            np.save(f"D:/anomaly_data/hard_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
+            np.save(f"anomaly_data/hard_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
 

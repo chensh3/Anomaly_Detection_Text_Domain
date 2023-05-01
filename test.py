@@ -28,7 +28,7 @@ dataset_list = sorted(dataset_list)
 
 # model_dict = {'FEAWAD':FEAWAD,'GANomaly': GANomaly}
 # model_dict = {'XGBOD': PYOD, 'GANomaly': GANomaly}
-model_dict = {'COPOD': PYOD, 'DeepSVDD': PYOD}  # WORKS
+model_dict = {'ECOD': PYOD, 'COPOD': PYOD, 'DeepSVDD': PYOD}  # WORKS
 # model_dict = {D}
 # save the results
 df_AUCROC = pd.DataFrame(data = None, index = dataset_list, columns = model_dict.keys())
@@ -48,7 +48,7 @@ for i, dataset in enumerate(dataset_list):
     # import the dataset
     datagenerator.dataset = dataset  # specify the dataset name
     data = datagenerator.generator(la = -1, realistic_synthetic_mode = None,
-                                   noise_type = None)  # only 0% labeled anomalies are available
+                                   noise_type = None)  # la = -1 => Unsupervised training, with equal anomaly and normal data amount in test
 
     for j, (name, clf) in enumerate(model_dict.items()):
         print(f"\t#{j}/{len(model_dict)}    model: {name}")
@@ -56,7 +56,7 @@ for i, dataset in enumerate(dataset_list):
         clf = clf(seed = seed, model_name = name)
 
         # training, for unsupervised models the y label will be discarded
-        clf = clf.fit(X_train = data['X_train'], y_train = data['y_train'])
+        clf = clf.fit(X_train = data['X_train'])
 
         # output predicted anomaly score on testing set
         if name == "DAGMM":

@@ -1,6 +1,7 @@
 Official code and data repository of [_**ADBench**: Anomaly Detection Benchmark_](https://arxiv.org/abs/2206.09426) (NeurIPS 2022).
 __Please star, watch, and fork ADBench for the active updates!__
 
+**Branched from https://github.com/Minqi824/ADBench, Dataset can be found there**
 
 ## Citing ADBench:
 Our ADBench benchmark paper is now available on [arxiv](https://arxiv.org/abs/2206.09426) and [OpenReview](https://openreview.net/forum?id=foA_SFQ9zo0).
