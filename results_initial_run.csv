@@ -1,0 +1,202 @@
+,ROC,,,PR,
+,COPOD,DeepSVDD,,COPOD,DeepSVDD
+easy_0_000000000_000000000_media_religion,0.50,0.52,,0.49,0.52
+easy_0_000000001_000000001_good news_weird news,0.57,0.48,,0.57,0.48
+easy_0_000000100_000000100_entertainment_comedy,0.43,0.45,,0.45,0.46
+easy_0_000100000_000100000_latino voices,0.46,0.43,,0.47,0.45
+easy_0_000101000_000101000_black voices_women,0.45,0.51,,0.46,0.51
+easy_0_000101010_000101010_queer voices,0.39,0.46,,0.42,0.47
+easy_0_001000100_001000100_style,0.37,0.56,,0.41,0.54
+easy_0_010000000_010000000_fifty,0.50,0.50,,0.49,0.50
+easy_0_010000001_010000001_politics_sports,0.52,0.49,,0.52,0.49
+easy_0_010000010_010000010_wellness_parenting_divorce,0.50,0.46,,0.49,0.46
+easy_0_010001000_010001000_college,0.51,0.49,,0.49,0.49
+easy_0_010010001_010010001_business_crime,0.58,0.52,,0.57,0.52
+easy_0_010011001_010011001_education,0.51,0.55,,0.49,0.54
+easy_0_010011011_010011011_money,0.49,0.53,,0.47,0.52
+easy_0_011000010_011000010_weddings,0.44,0.46,,0.45,0.46
+easy_0_011000110_011000110_home & living,0.35,0.40,,0.40,0.43
+easy_0_100000001_100000001_world news_u.s. news,0.73,0.55,,0.72,0.56
+easy_0_100000010_100000010_impact,0.51,0.48,,0.49,0.49
+easy_0_100001000_100001000_environment,0.57,0.48,,0.57,0.48
+easy_0_100011000_100011000_science,0.63,0.56,,0.62,0.56
+easy_0_101000100_101000100_food & drink,0.49,0.47,,0.48,0.47
+easy_0_101000101_101000101_arts & culture,0.47,0.47,,0.47,0.47
+easy_0_110000110_110000110_healthy living tips,0.52,0.49,,0.50,0.49
+easy_0_110011001_110011001_tech,0.54,0.56,,0.52,0.55
+easy_0_111000100_111000100_travel,0.50,0.53,,0.48,0.52
+easy_1_000000000_000000001_media_religion_good news_weird news,0.54,0.51,,0.53,0.51
+easy_1_000000000_000100000_media_religion_latino voices,0.49,0.51,,0.49,0.51
+easy_1_000000000_010000000_media_religion_fifty,0.51,0.50,,0.50,0.50
+easy_1_000000100_000000000_entertainment_comedy_media_religion,0.45,0.56,,0.45,0.56
+easy_1_000000100_001000100_entertainment_comedy_style,0.40,0.45,,0.43,0.45
+easy_1_000101000_000100000_black voices_women_latino voices,0.46,0.50,,0.47,0.50
+easy_1_000101010_000101000_queer voices_black voices_women,0.42,0.45,,0.44,0.46
+easy_1_010000000_010001000_fifty_college,0.52,0.50,,0.50,0.51
+easy_1_010000001_000000001_politics_sports_good news_weird news,0.53,0.47,,0.53,0.48
+easy_1_010000001_010000000_politics_sports_fifty,0.52,0.45,,0.52,0.46
+easy_1_010000001_010010001_politics_sports_business_crime,0.54,0.50,,0.53,0.49
+easy_1_010000010_010000000_wellness_parenting_divorce_fifty,0.50,0.46,,0.49,0.47
+easy_1_010000010_011000010_wellness_parenting_divorce_weddings,0.49,0.51,,0.49,0.51
+easy_1_010010001_010011001_business_crime_education,0.57,0.53,,0.56,0.54
+easy_1_010011011_010011001_money_education,0.51,0.48,,0.48,0.48
+easy_1_011000110_011000010_home & living_weddings,0.38,0.60,,0.42,0.58
+easy_1_100000001_000000001_world news_u.s. news_good news_weird news,0.69,0.49,,0.69,0.50
+easy_1_100011000_100001000_science_environment,0.58,0.57,,0.57,0.58
+easy_1_101000100_001000100_food & drink_style,0.42,0.52,,0.43,0.52
+easy_1_101000100_101000101_food & drink_arts & culture,0.48,0.52,,0.48,0.52
+easy_1_110011001_010011001_tech_education,0.53,0.43,,0.50,0.44
+easy_1_111000100_101000100_travel_food & drink,0.50,0.54,,0.48,0.53
+hard_7_000101010_101000101_queer voices_arts & culture,0.42,0.51,,0.44,0.51
+hard_7_001000100_010011011_style_money,0.38,0.49,,0.41,0.48
+hard_7_001000100_110011001_style_tech,0.39,0.55,,0.42,0.54
+hard_7_010011011_101000101_money_arts & culture,0.48,0.49,,0.47,0.49
+hard_7_011000110_100011000_home & living_science,0.44,0.57,,0.47,0.57
+hard_7_011000110_110011001_home & living_tech,0.41,0.45,,0.44,0.45
+hard_7_101000100_010011001_food & drink_education,0.49,0.46,,0.48,0.46
+hard_7_111000100_000101010_travel_queer voices,0.46,0.50,,0.46,0.50
+hard_7_111000100_010011011_travel_money,0.51,0.45,,0.49,0.46
+hard_8_101000100_010011011_food & drink_money,0.49,0.48,,0.48,0.47
+medium_3_000000000_100011000_media_religion_science,0.54,0.48,,0.53,0.48
+medium_3_000000001_001000100_good news_weird news_style,0.42,0.46,,0.45,0.46
+medium_3_000000001_010001000_good news_weird news_college,0.56,0.55,,0.56,0.54
+medium_3_000000001_010011001_good news_weird news_education,0.57,0.50,,0.56,0.50
+medium_3_000000001_100001000_good news_weird news_environment,0.58,0.44,,0.57,0.45
+medium_3_000000001_101000101_good news_weird news_arts & culture,0.52,0.56,,0.53,0.56
+medium_3_000000100_000101000_entertainment_comedy_black voices_women,0.44,0.56,,0.45,0.55
+medium_3_000000100_010001000_entertainment_comedy_college,0.44,0.47,,0.45,0.47
+medium_3_000000100_011000110_entertainment_comedy_home & living,0.41,0.53,,0.43,0.52
+medium_3_000000100_100000001_entertainment_comedy_world news_u.s. news,0.53,0.48,,0.54,0.48
+medium_3_000000100_100000010_entertainment_comedy_impact,0.44,0.51,,0.45,0.51
+medium_3_000000100_100001000_entertainment_comedy_environment,0.45,0.52,,0.46,0.52
+medium_3_000000100_101000101_entertainment_comedy_arts & culture,0.43,0.51,,0.45,0.50
+medium_3_000000100_110000110_entertainment_comedy_healthy living tips,0.45,0.52,,0.46,0.51
+medium_3_000000100_111000100_entertainment_comedy_travel,0.45,0.53,,0.46,0.53
+medium_3_000101000_000000001_black voices_women_good news_weird news,0.50,0.53,,0.51,0.53
+medium_3_000101000_010000000_black voices_women_fifty,0.46,0.47,,0.47,0.47
+medium_3_000101000_100011000_black voices_women_science,0.49,0.53,,0.50,0.53
+medium_3_000101010_000000000_queer voices_media_religion,0.45,0.50,,0.46,0.50
+medium_3_000101010_010001000_queer voices_college,0.41,0.51,,0.44,0.50
+medium_3_000101010_100000010_queer voices_impact,0.44,0.49,,0.45,0.49
+medium_3_000101010_100001000_queer voices_environment,0.46,0.46,,0.47,0.47
+medium_3_001000100_000100000_style_latino voices,0.37,0.47,,0.41,0.47
+medium_3_001000100_010000000_style_fifty,0.38,0.53,,0.41,0.51
+medium_3_010000000_010011001_fifty_education,0.52,0.53,,0.50,0.53
+medium_3_010000001_000000100_politics_sports_entertainment_comedy,0.48,0.49,,0.49,0.49
+medium_3_010000001_000100000_politics_sports_latino voices,0.52,0.47,,0.52,0.48
+medium_3_010000001_010011011_politics_sports_money,0.52,0.54,,0.52,0.53
+medium_3_010000001_011000010_politics_sports_weddings,0.51,0.55,,0.51,0.54
+medium_3_010000001_110011001_politics_sports_tech,0.52,0.45,,0.52,0.45
+medium_3_010000010_000000001_wellness_parenting_divorce_good news_weird news,0.51,0.48,,0.50,0.48
+medium_3_010000010_000000100_wellness_parenting_divorce_entertainment_comedy,0.47,0.53,,0.47,0.53
+medium_3_010000010_000100000_wellness_parenting_divorce_latino voices,0.50,0.57,,0.49,0.57
+medium_3_010000010_000101010_wellness_parenting_divorce_queer voices,0.48,0.54,,0.48,0.54
+medium_3_010000010_010010001_wellness_parenting_divorce_business_crime,0.52,0.51,,0.51,0.51
+medium_3_010000010_010011011_wellness_parenting_divorce_money,0.50,0.57,,0.49,0.56
+medium_3_010001000_000100000_college_latino voices,0.49,0.46,,0.49,0.47
+medium_3_010010001_000000000_business_crime_media_religion,0.56,0.48,,0.55,0.48
+medium_3_010010001_010001000_business_crime_college,0.58,0.43,,0.57,0.44
+medium_3_010010001_100000001_business_crime_world news_u.s. news,0.66,0.58,,0.66,0.58
+medium_3_010011011_010001000_money_college,0.50,0.51,,0.49,0.50
+medium_3_011000010_000000000_weddings_media_religion,0.47,0.51,,0.48,0.51
+medium_3_011000010_001000100_weddings_style,0.38,0.45,,0.41,0.45
+medium_3_011000010_010001000_weddings_college,0.45,0.46,,0.46,0.46
+medium_3_011000010_100000010_weddings_impact,0.48,0.44,,0.47,0.45
+medium_3_011000110_010000000_home & living_fifty,0.39,0.44,,0.42,0.46
+medium_3_100000001_000100000_world news_u.s. news_latino voices,0.70,0.52,,0.70,0.51
+medium_3_100000001_010000000_world news_u.s. news_fifty,0.70,0.47,,0.69,0.47
+medium_3_100000001_100011000_world news_u.s. news_science,0.71,0.51,,0.70,0.51
+medium_3_100000001_110011001_world news_u.s. news_tech,0.70,0.49,,0.69,0.49
+medium_3_100000010_000000001_impact_good news_weird news,0.55,0.55,,0.54,0.55
+medium_3_100000010_000100000_impact_latino voices,0.50,0.47,,0.49,0.48
+medium_3_100000010_010000000_impact_fifty,0.52,0.53,,0.50,0.53
+medium_3_100000010_100011000_impact_science,0.56,0.47,,0.54,0.48
+medium_3_100001000_000100000_environment_latino voices,0.55,0.52,,0.55,0.52
+medium_3_100001000_010000000_environment_fifty,0.55,0.53,,0.54,0.53
+medium_3_100011000_010001000_science_college,0.59,0.46,,0.58,0.46
+medium_3_100011000_010011001_science_education,0.60,0.50,,0.58,0.49
+medium_3_101000100_000000000_food & drink_media_religion,0.50,0.53,,0.49,0.53
+medium_3_101000100_011000110_food & drink_home & living,0.44,0.46,,0.45,0.47
+medium_3_101000100_100000001_food & drink_world news_u.s. news,0.63,0.52,,0.63,0.53
+medium_3_101000100_100000010_food & drink_impact,0.50,0.47,,0.48,0.47
+medium_3_101000100_100001000_food & drink_environment,0.52,0.45,,0.51,0.45
+medium_3_110000110_010000000_healthy living tips_fifty,0.52,0.51,,0.50,0.51
+medium_3_110000110_011000010_healthy living tips_weddings,0.49,0.47,,0.48,0.48
+medium_3_110000110_101000100_healthy living tips_food & drink,0.50,0.51,,0.49,0.51
+medium_3_110011001_010001000_tech_college,0.54,0.46,,0.52,0.47
+medium_3_110011001_100001000_tech_environment,0.56,0.45,,0.54,0.46
+medium_3_111000100_010000000_travel_fifty,0.51,0.48,,0.49,0.48
+medium_3_111000100_011000010_travel_weddings,0.48,0.48,,0.47,0.48
+medium_4_000000000_010011001_media_religion_education,0.51,0.48,,0.50,0.49
+medium_4_000000000_101000101_media_religion_arts & culture,0.49,0.48,,0.48,0.48
+medium_4_000000001_010011011_good news_weird news_money,0.55,0.47,,0.54,0.47
+medium_4_000000001_100011000_good news_weird news_science,0.60,0.47,,0.59,0.47
+medium_4_000000001_110011001_good news_weird news_tech,0.57,0.54,,0.56,0.54
+medium_4_000000100_000101010_entertainment_comedy_queer voices,0.42,0.53,,0.44,0.52
+medium_4_000000100_010010001_entertainment_comedy_business_crime,0.48,0.49,,0.48,0.49
+medium_4_000000100_011000010_entertainment_comedy_weddings,0.43,0.61,,0.44,0.61
+medium_4_000000100_100011000_entertainment_comedy_science,0.45,0.50,,0.46,0.50
+medium_4_000101000_001000100_black voices_women_style,0.40,0.49,,0.43,0.49
+medium_4_000101000_010011001_black voices_women_education,0.46,0.47,,0.47,0.48
+medium_4_000101000_100000001_black voices_women_world news_u.s. news,0.61,0.52,,0.62,0.51
+medium_4_000101000_100000010_black voices_women_impact,0.47,0.56,,0.48,0.55
+medium_4_000101010_000000001_queer voices_good news_weird news,0.47,0.55,,0.49,0.54
+medium_4_000101010_010000000_queer voices_fifty,0.41,0.51,,0.44,0.51
+medium_4_000101010_010011011_queer voices_money,0.41,0.51,,0.43,0.50
+medium_4_000101010_011000010_queer voices_weddings,0.41,0.48,,0.43,0.49
+medium_4_000101010_100011000_queer voices_science,0.45,0.46,,0.47,0.46
+medium_4_001000100_010001000_style_college,0.38,0.48,,0.41,0.48
+medium_4_001000100_100001000_style_environment,0.42,0.50,,0.44,0.49
+medium_4_010000001_000101000_politics_sports_black voices_women,0.51,0.50,,0.51,0.50
+medium_4_010000001_001000100_politics_sports_style,0.48,0.49,,0.49,0.48
+medium_4_010000001_011000110_politics_sports_home & living,0.50,0.53,,0.51,0.52
+medium_4_010000001_100000010_politics_sports_impact,0.52,0.53,,0.51,0.53
+medium_4_010000001_100001000_politics_sports_environment,0.53,0.45,,0.52,0.46
+medium_4_010000001_101000101_politics_sports_arts & culture,0.52,0.45,,0.51,0.46
+medium_4_010000001_110000110_politics_sports_healthy living tips,0.52,0.46,,0.52,0.47
+medium_4_010000001_111000100_politics_sports_travel,0.52,0.55,,0.51,0.55
+medium_4_010000010_000101000_wellness_parenting_divorce_black voices_women,0.49,0.46,,0.49,0.46
+medium_4_010000010_001000100_wellness_parenting_divorce_style,0.46,0.56,,0.46,0.56
+medium_4_010000010_010011001_wellness_parenting_divorce_education,0.50,0.50,,0.49,0.50
+medium_4_010000010_100000001_wellness_parenting_divorce_world news_u.s. news,0.57,0.51,,0.56,0.50
+medium_4_010000010_100001000_wellness_parenting_divorce_environment,0.51,0.49,,0.50,0.49
+medium_4_010000010_111000100_wellness_parenting_divorce_travel,0.50,0.47,,0.49,0.47
+medium_4_010010001_000100000_business_crime_latino voices,0.56,0.47,,0.56,0.48
+medium_4_010010001_011000010_business_crime_weddings,0.54,0.46,,0.54,0.47
+medium_4_010010001_100011000_business_crime_science,0.59,0.48,,0.58,0.48
+medium_4_010011011_010000000_money_fifty,0.50,0.47,,0.49,0.47
+medium_4_011000010_000000001_weddings_good news_weird news,0.51,0.44,,0.52,0.46
+medium_4_011000010_000100000_weddings_latino voices,0.44,0.56,,0.45,0.55
+medium_4_011000010_010011011_weddings_money,0.45,0.52,,0.46,0.51
+medium_4_011000110_000000000_home & living_media_religion,0.44,0.47,,0.45,0.47
+medium_4_011000110_010001000_home & living_college,0.39,0.48,,0.42,0.48
+medium_4_011000110_100000010_home & living_impact,0.42,0.52,,0.44,0.52
+medium_4_011000110_101000101_home & living_arts & culture,0.40,0.47,,0.43,0.47
+medium_4_100000001_001000100_world news_u.s. news_style,0.54,0.51,,0.56,0.51
+medium_4_100000001_010001000_world news_u.s. news_college,0.71,0.51,,0.70,0.51
+medium_4_100000001_010011001_world news_u.s. news_education,0.71,0.55,,0.70,0.54
+medium_4_100000010_001000100_impact_style,0.40,0.46,,0.42,0.46
+medium_4_100000010_010001000_impact_college,0.51,0.55,,0.49,0.54
+medium_4_100000010_101000101_impact_arts & culture,0.49,0.50,,0.48,0.50
+medium_4_100001000_010011001_environment_education,0.55,0.56,,0.54,0.55
+medium_4_100001000_101000101_environment_arts & culture,0.52,0.48,,0.51,0.48
+medium_4_100011000_000100000_science_latino voices,0.58,0.52,,0.58,0.51
+medium_4_100011000_010000000_science_fifty,0.58,0.46,,0.57,0.47
+medium_4_100011000_010011011_science_money,0.57,0.51,,0.56,0.52
+medium_4_101000100_000000001_food & drink_good news_weird news,0.52,0.47,,0.51,0.48
+medium_4_101000100_000100000_food & drink_latino voices,0.49,0.40,,0.48,0.42
+medium_4_101000100_010000000_food & drink_fifty,0.49,0.60,,0.48,0.60
+medium_4_101000100_011000010_food & drink_weddings,0.47,0.44,,0.47,0.45
+medium_4_101000100_100011000_food & drink_science,0.52,0.44,,0.51,0.45
+medium_4_110000110_000000000_healthy living tips_media_religion,0.52,0.50,,0.50,0.50
+medium_4_110000110_001000100_healthy living tips_style,0.42,0.49,,0.44,0.49
+medium_4_110000110_010001000_healthy living tips_college,0.52,0.50,,0.50,0.50
+medium_4_110000110_100000001_healthy living tips_world news_u.s. news,0.65,0.53,,0.64,0.53
+medium_4_110000110_100001000_healthy living tips_environment,0.54,0.54,,0.52,0.53
+medium_4_110000110_101000101_healthy living tips_arts & culture,0.50,0.50,,0.49,0.50
+medium_4_110011001_010000000_tech_fifty,0.52,0.53,,0.50,0.52
+medium_4_111000100_000000000_travel_media_religion,0.50,0.49,,0.49,0.49
+medium_4_111000100_010001000_travel_college,0.51,0.58,,0.49,0.57
+medium_4_111000100_100000001_travel_world news_u.s. news,0.63,0.48,,0.63,0.48
+medium_4_111000100_100000010_travel_impact,0.50,0.46,,0.49,0.46
+medium_4_111000100_100001000_travel_environment,0.53,0.48,,0.51,0.48
