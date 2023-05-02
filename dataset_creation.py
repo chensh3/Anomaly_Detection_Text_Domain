@@ -3,8 +3,9 @@ import numpy as np
 from scipy.spatial.distance import hamming
 import itertools
 from tqdm.auto import tqdm
+
 df = pd.read_json("News_Category_Dataset_v3.json", lines = True)
-df = df[["headline", "category"]]
+df = df[["short_description", "category"]]
 df.category = df.category.str.lower()
 
 df.loc[(df.category == "the worldpost") | (df.category == "worldpost"), 'category'] = "world news"
@@ -51,19 +52,28 @@ permutations = list(itertools.combinations_with_replacement(vectors.bin, 2))
 
 results = [[], [], [], [], [], [], [], [], []]
 
+hamm_mat = pd.DataFrame(np.zeros(shape = (len(vectors.bin.unique()), len(vectors.bin.unique()))),
+                        index = vectors.bin.unique(), columns = vectors.bin.unique())
+
+hamm_mat = hamm_mat.astype(int)
+
 for per in permutations:
     results[int(hamming(list(str(per[0])), list(str(per[1]))) * 9)].append(per)
+    hamm_mat.loc[per[0], per[1]] = int(hamming(list(str(per[0])), list(str(per[1]))) * 9)
+    hamm_mat.loc[per[1], per[0]] = int(hamming(list(str(per[0])), list(str(per[1]))) * 9)
+
+pairs = results[3]
 
 # # BERT
 #
-# from bert import bert_embed
-#
+from bert import bert_embed
+
 # print(" start embed")
-# embeding = bert_embed(df.headline.to_list())
+# embeding = bert_embed(df.short_description.to_list())
 # print("stop embed")
 # df["embed"] = embeding
-df=pd.read_pickle("df_all.pickle")
-
+# df.to_pickle("short_df_all.pickle")
+df = pd.read_pickle("short_df_all.pickle")
 
 # easy = results[0:2]
 # medium = results[3:5]
@@ -73,42 +83,46 @@ anomaly = pd.DataFrame(columns = df.columns)
 
 # for i,type_data in enumerate([easy,medium,hard]):
 #     for diff in type_data:
+radius = 2
+dif = results[1]
+for diff in tqdm(dif):
+    data = df.copy()
+    anomaly = pd.DataFrame(columns = data.columns)
 
-for i in range(9):
-    if  i == 7 or i==8:
-        dif=results[i]
+    classes = vectors.loc[(vectors.bin == diff[0]) | (vectors.bin == diff[1]), "classes"].values
+    classes = np.hstack(classes)[0]
 
-        for diff in tqdm(dif,desc = f"{i}/9"):
-            data = df.copy()
-            anomaly = pd.DataFrame(columns = data.columns)
-            if diff[0] != diff[1]:
-                classes = vectors.loc[(vectors.bin == diff[0]) | (vectors.bin == diff[1]), "classes"].values
-            else:
-                classes = vectors.loc[(vectors.bin == diff[0]), "classes"].values
+    for class_1 in classes:
+        anomaly = anomaly.append(data.loc[(data.category == class_1), :])
+    anomaly.loc[:, "label"] = np.ones(len(anomaly))
+    normal = data.drop(anomaly.index)
+    for vec in vectors.bin.unique():
+        if vec not in diff:
+            if not (hamm_mat.loc[vec, diff[0]] > radius and hamm_mat.loc[vec, diff[1]] > radius):
+                classes_drop = vectors.loc[(vectors.bin == vec), "classes"].values
+                classes_drop = np.hstack(classes_drop)[0]
+                for cls_drop in classes_drop:
+                    print("delete", cls_drop)
+                    normal = normal.drop(normal[normal.category == cls_drop].index)
 
-            classes = np.hstack(classes)[0]
-            for class_1 in classes:
-                anomaly = anomaly.append(data.loc[(data.category == class_1), :])
-            anomaly.loc[:, "label"] = np.ones(len(anomaly))
-            normal = data.drop(anomaly.index)
-            normal.loc[:, "label"] = np.zeros(len(normal))
-            if len(normal)*0.5 > len(anomaly):
-                noraml_to_test = normal.sample(len(anomaly))
-            # anomaly["label"] = anomaly.category.apply(lambda x: 1 if x == classes[0] or x == classes[1] else 0)
+    normal.loc[:, "label"] = np.zeros(len(normal))
+    if len(normal) * 0.5 > len(anomaly):
+        noraml_to_test = normal.sample(len(anomaly))
+        # anomaly["label"] = anomaly.category.apply(lambda x: 1 if x == classes[0] or x == classes[1] else 0)
 
-                X_test = anomaly.append(noraml_to_test)
-                X_train = normal.drop(noraml_to_test.index)
-            else:
-                print( diff, classes, " no normal in test")
-                X_test = anomaly
-                X_train = normal
-            y_train = X_train.loc[:, ["label"]]
-            y_test = X_test.loc[:, ["label"]]
-            X_test = X_test.loc[:, ["embed"]]
-            X_train = X_train.loc[:, ["embed"]]
+        X_test = anomaly.append(noraml_to_test)
+        X_train = normal.drop(noraml_to_test.index)
+    else:
+        print(diff, classes, " no normal in test")
+        X_test = anomaly
+        X_train = normal
+    y_train = X_train.loc[:, ["label"]]
+    y_test = X_test.loc[:, ["label"]]
+    X_test = X_test.loc[:, ["embed"]]
+    X_train = X_train.loc[:, ["embed"]]
 
-            dataset = {'X_train': X_train, 'y_train': y_train, 'X_test': X_test, 'y_test': y_test}
-            # np.save(f"news_data/easy_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
-            # np.save(f"news_data/medium_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
-            np.save(f"anomaly_data/hard_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
-
+    dataset = {'X_train': X_train, 'y_train': y_train, 'X_test': X_test, 'y_test': y_test}
+    # np.save(f"news_data/easy_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
+    # np.save(f"news_data/medium_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
+    np.save(f"D:/anomaly_data/1_medium_4_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
+    # diff_difficulty_radius_vec1_vec2_classes.npz
