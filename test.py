@@ -1,7 +1,7 @@
 # import basic package
 import os
 import pandas as pd
-
+from tqdm import tqdm
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -13,31 +13,25 @@ from myutils import Utils
 datagenerator = DataGenerator()  # data generator
 utils = Utils()  # utils function
 
-# from baseline.PyOD import PYOD
-from baseline.PyOD import PYOD
-# from baseline.GANomaly.run import GANomaly
-# from baseline.Supervised import supervised
 
-# from baseline.FTTransformer.run import FTTransformer
-# from baseline.FEAWAD.run import FEAWAD
-# from baseline.REPEN.run import REPEN
+from baseline.PyOD import PYOD
+
+
 # dataset and model list / dict
 dataset_list = [x.split(".npz")[0] for x in os.listdir('D:/anomaly_data')]
 dataset_list = sorted(dataset_list)
-# dataset_list=['20news_5']
 
-# model_dict = {'FEAWAD':FEAWAD,'GANomaly': GANomaly}
-# model_dict = {'XGBOD': PYOD, 'GANomaly': GANomaly}
-model_dict = {'ECOD': PYOD, 'COPOD': PYOD, 'DeepSVDD': PYOD}  # WORKS
-# model_dict = {D}
+model_dict = { 'COPOD': PYOD, 'DeepSVDD': PYOD}  # WORKS
+
+
 # save the results
 df_AUCROC = pd.DataFrame(data = None, index = dataset_list, columns = model_dict.keys())
 df_AUCPR = pd.DataFrame(data = None, index = dataset_list, columns = model_dict.keys())
 
 # seed for reproducible results
 seed = 42
-# dataset_list=[]
-for i, dataset in enumerate(dataset_list):
+
+for i, dataset in tqdm(enumerate(dataset_list)):
     '''
     la: ratio of labeled anomalies, from 0.0 to 1.0
     realistic_synthetic_mode: types of synthetic anomalies, can be local, global, dependency or cluster
@@ -56,7 +50,7 @@ for i, dataset in enumerate(dataset_list):
         clf = clf(seed = seed, model_name = name)
 
         # training, for unsupervised models the y label will be discarded
-        clf = clf.fit(X_train = data['X_train'])
+        clf = clf.fit(X_train = data['X_train'],y_train= data['y_train'])
 
         # output predicted anomaly score on testing set
         if name == "DAGMM":
@@ -70,6 +64,8 @@ for i, dataset in enumerate(dataset_list):
         # save results
         df_AUCROC.loc[dataset, name] = result['aucroc']
         df_AUCPR.loc[dataset, name] = result['aucpr']
+    df_AUCPR.to_pickle("results_aucpr.pickle")
+    df_AUCROC.to_pickle("results_aucroc.pickle")
 
 print(df_AUCROC)
 print(df_AUCPR)

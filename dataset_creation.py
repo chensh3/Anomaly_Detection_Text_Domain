@@ -66,7 +66,7 @@ pairs = results[3]
 
 # # BERT
 #
-from bert import bert_embed
+# from bert import bert_embed
 
 # print(" start embed")
 # embeding = bert_embed(df.short_description.to_list())
@@ -83,46 +83,48 @@ anomaly = pd.DataFrame(columns = df.columns)
 
 # for i,type_data in enumerate([easy,medium,hard]):
 #     for diff in type_data:
-radius = 2
-dif = results[1]
-for diff in tqdm(dif):
-    data = df.copy()
-    anomaly = pd.DataFrame(columns = data.columns)
+for i in [0, 1, 2, 3]:
+    for radius in [2, 3, 4, 5]:
 
-    classes = vectors.loc[(vectors.bin == diff[0]) | (vectors.bin == diff[1]), "classes"].values
-    classes = np.hstack(classes)[0]
+        dif = results[i]
+        for diff in tqdm(dif, desc = f"radius: {radius}, i {i}"):
+            data = df.copy()
+            anomaly = pd.DataFrame(columns = data.columns)
 
-    for class_1 in classes:
-        anomaly = anomaly.append(data.loc[(data.category == class_1), :])
-    anomaly.loc[:, "label"] = np.ones(len(anomaly))
-    normal = data.drop(anomaly.index)
-    for vec in vectors.bin.unique():
-        if vec not in diff:
-            if not (hamm_mat.loc[vec, diff[0]] > radius and hamm_mat.loc[vec, diff[1]] > radius):
-                classes_drop = vectors.loc[(vectors.bin == vec), "classes"].values
-                classes_drop = np.hstack(classes_drop)[0]
-                for cls_drop in classes_drop:
-                    print("delete", cls_drop)
-                    normal = normal.drop(normal[normal.category == cls_drop].index)
+            classes = vectors.loc[(vectors.bin == diff[0]) | (vectors.bin == diff[1]), "classes"].values
+            classes = np.hstack(classes)[0]
 
-    normal.loc[:, "label"] = np.zeros(len(normal))
-    if len(normal) * 0.5 > len(anomaly):
-        noraml_to_test = normal.sample(len(anomaly))
-        # anomaly["label"] = anomaly.category.apply(lambda x: 1 if x == classes[0] or x == classes[1] else 0)
+            for class_1 in classes:
+                anomaly = anomaly.append(data.loc[(data.category == class_1), :])
+            anomaly.loc[:, "label"] = np.ones(len(anomaly))
+            normal = data.drop(anomaly.index)
+            for vec in vectors.bin.unique():
+                if vec not in diff:
+                    if not (hamm_mat.loc[vec, diff[0]] > radius and hamm_mat.loc[vec, diff[1]] > radius):
+                        classes_drop = vectors.loc[(vectors.bin == vec), "classes"].values
+                        classes_drop = np.hstack(classes_drop)[0]
+                        for cls_drop in classes_drop:
+                            # print("delete", cls_drop)
+                            normal = normal.drop(normal[normal.category == cls_drop].index)
 
-        X_test = anomaly.append(noraml_to_test)
-        X_train = normal.drop(noraml_to_test.index)
-    else:
-        print(diff, classes, " no normal in test")
-        X_test = anomaly
-        X_train = normal
-    y_train = X_train.loc[:, ["label"]]
-    y_test = X_test.loc[:, ["label"]]
-    X_test = X_test.loc[:, ["embed"]]
-    X_train = X_train.loc[:, ["embed"]]
+            normal.loc[:, "label"] = np.zeros(len(normal))
+            if len(normal) * 0.5 > len(anomaly):
+                noraml_to_test = normal.sample(len(anomaly))
+                # anomaly["label"] = anomaly.category.apply(lambda x: 1 if x == classes[0] or x == classes[1] else 0)
 
-    dataset = {'X_train': X_train, 'y_train': y_train, 'X_test': X_test, 'y_test': y_test}
-    # np.save(f"news_data/easy_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
-    # np.save(f"news_data/medium_{i}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
-    np.save(f"D:/anomaly_data/1_medium_4_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
-    # diff_difficulty_radius_vec1_vec2_classes.npz
+                X_test = anomaly.append(noraml_to_test)
+                X_train = normal.drop(noraml_to_test.index)
+            else:
+                print(diff, classes, " no normal in test")
+                continue
+                X_test = anomaly
+                X_train = normal
+            y_train = X_train.loc[:, ["label"]]
+            y_test = X_test.loc[:, ["label"]]
+            X_test = X_test.loc[:, ["embed"]]
+            X_train = X_train.loc[:, ["embed"]]
+
+            dataset = {'X_train': X_train, 'y_train': y_train, 'X_test': X_test, 'y_test': y_test}
+
+            np.save(f"D:/anomaly_data/{i}_{radius}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
+            # diff_difficulty_radius_vec1_vec2_classes.npz

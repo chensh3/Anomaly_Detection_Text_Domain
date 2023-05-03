@@ -41,7 +41,7 @@ class DataGenerator():
         self.dataset_list_nlp = [os.path.splitext(_)[0] for _ in os.listdir('datasets/NLP_by_BERT')
                                  if os.path.splitext(_)[1] == '.npz']  # NLP datasets
         self.dataset_list_nlp_roberta = [os.path.splitext(_)[0] for _ in os.listdir('datasets/NLP_by_RoBERTa')
-                                 if os.path.splitext(_)[1] == '.npz']  # NLP datasets
+                                         if os.path.splitext(_)[1] == '.npz']  # NLP datasets
 
         # myutils function
         self.utils = Utils()
@@ -233,18 +233,23 @@ class DataGenerator():
             elif self.dataset in self.dataset_list_nlp_roberta:
                 data = np.load(os.path.join('datasets', 'NLP_by_RoBERTa', self.dataset + '.npz'), allow_pickle = True)
             else:
-                data = np.load(os.path.join('D:/', 'anomaly_data', self.dataset + '.npz.npy'), allow_pickle = True)
+                data = np.load(os.path.join('D:/', 'anomaly_data', self.dataset + '.npz.npy'),
+                               allow_pickle = True).tolist()
 
             if not "X" in data.keys():
-                X_train = data["X_train"]
-                X_test = data["X_test"]
-                y_train = data["y_train"]
-                y_test = data["y_test"]
+                d = data["X_train"].to_numpy().reshape(data["X_train"].values.shape[0])
+                X_train = np.array(list(map(lambda x: x.numpy(), d)))
+
+                d = data["X_test"].to_numpy().reshape(data["X_test"].values.shape[0])
+                X_test = np.array(list(map(lambda x: x.numpy(), d)))
+
+                y_train = data["y_train"].values
+                y_test = data["y_test"].values
+                return {'X_train': X_train, 'y_train': y_train, 'X_test': X_test, 'y_test': y_test}
             else:
 
                 X = data['X']
                 y = data['y']
-
 
         # change of chen
         if la == -1:
@@ -252,7 +257,7 @@ class DataGenerator():
             anomaly_ind = np.where(y == 1)[0]
             inxs = np.array(range(len(y)))
             un_anomalies_ind = np.setdiff1d(inxs, anomaly_ind)
-            self.test_size=len(anomaly_ind)
+            self.test_size = len(anomaly_ind)
             # Select N test samples from the normal data when N = number of anomalies
             test_ind = np.random.choice(un_anomalies_ind, self.test_size,
                                         replace = False)
