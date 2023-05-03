@@ -40,6 +40,8 @@ class DataGenerator():
                                 if os.path.splitext(_)[1] == '.npz']  # CV datasets
         self.dataset_list_nlp = [os.path.splitext(_)[0] for _ in os.listdir('datasets/NLP_by_BERT')
                                  if os.path.splitext(_)[1] == '.npz']  # NLP datasets
+        self.dataset_list_nlp_roberta = [os.path.splitext(_)[0] for _ in os.listdir('datasets/NLP_by_RoBERTa')
+                                 if os.path.splitext(_)[1] == '.npz']  # NLP datasets
 
         # myutils function
         self.utils = Utils()
@@ -228,18 +230,25 @@ class DataGenerator():
                 data = np.load(os.path.join('datasets', 'CV_by_ResNet18', self.dataset + '.npz'), allow_pickle = True)
             elif self.dataset in self.dataset_list_nlp:
                 data = np.load(os.path.join('datasets', 'NLP_by_BERT', self.dataset + '.npz'), allow_pickle = True)
+            elif self.dataset in self.dataset_list_nlp_roberta:
+                data = np.load(os.path.join('datasets', 'NLP_by_RoBERTa', self.dataset + '.npz'), allow_pickle = True)
             else:
                 data = np.load(os.path.join('D:/', 'anomaly_data', self.dataset + '.npz.npy'), allow_pickle = True)
 
+            if not "X" in data.keys():
                 X_train = data["X_train"]
                 X_test = data["X_test"]
                 y_train = data["y_train"]
                 y_test = data["y_test"]
+            else:
+
+                X = data['X']
+                y = data['y']
 
 
         # change of chen
         if la == -1:
-            self.utils.data_description(X = X, y = y)
+            # self.utils.data_description(X = X, y = y)
             anomaly_ind = np.where(y == 1)[0]
             inxs = np.array(range(len(y)))
             un_anomalies_ind = np.setdiff1d(inxs, anomaly_ind)
