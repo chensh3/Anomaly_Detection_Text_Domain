@@ -37,36 +37,38 @@ for i, dataset in tqdm(enumerate(dataset_list)):
     realistic_synthetic_mode: types of synthetic anomalies, can be local, global, dependency or cluster
     noise_type: inject data noises for testing model robustness, can be duplicated_anomalies, irrelevant_features or label_contamination
     '''
-    print("\n\n")
-    print(f"#{i}/{len(dataset_list)} : Dataset Name: {dataset}")
-    # import the dataset
-    datagenerator.dataset = dataset  # specify the dataset name
-    data = datagenerator.generator(la = -1, realistic_synthetic_mode = None,
-                                   noise_type = None)  # la = -1 => Unsupervised training, with equal anomaly and normal data amount in test
+    if pd.isna(pd.read_pickle("results_aucpr.pickle").loc[dataset].COPOD):
+        print("\n\n")
+        print(f"#{i}/{len(dataset_list)} : Dataset Name: {dataset}")
+        # import the dataset
+        datagenerator.dataset = dataset  # specify the dataset name
+        data = datagenerator.generator(la = -1, realistic_synthetic_mode = None,
+                                       noise_type = None)  # la = -1 => Unsupervised training, with equal anomaly and normal data amount in test
 
-    for j, (name, clf) in enumerate(model_dict.items()):
-        print(f"\t#{j}/{len(model_dict)}    model: {name}")
-        # model initialization
-        clf = clf(seed = seed, model_name = name)
+        for j, (name, clf) in enumerate(model_dict.items()):
+            print(f"\t#{j}/{len(model_dict)}    model: {name}")
+            # model initialization
+            clf = clf(seed = seed, model_name = name)
 
-        # training, for unsupervised models the y label will be discarded
-        clf = clf.fit(X_train = data['X_train'],y_train= data['y_train'])
+            # training, for unsupervised models the y label will be discarded
+            clf = clf.fit(X_train = data['X_train'],y_train= data['y_train'])
 
-        # output predicted anomaly score on testing set
-        if name == "DAGMM":
-            score = clf.predict_score(data["X_train"], data["X_test"])
-        else:
-            score = clf.predict_score(data['X_test'])
+            # output predicted anomaly score on testing set
+            if name == "DAGMM":
+                score = clf.predict_score(data["X_train"], data["X_test"])
+            else:
+                score = clf.predict_score(data['X_test'])
 
-        # evaluation
-        result = utils.metric(y_true = data['y_test'], y_score = score)
-        print(f" results: \n\t AUCROC: \t {result['aucroc']:.4f} \n\t AUCPR: \t {result['aucpr']:.4f}")
-        # save results
-        df_AUCROC.loc[dataset, name] = result['aucroc']
-        df_AUCPR.loc[dataset, name] = result['aucpr']
-    df_AUCPR.to_pickle("results_aucpr.pickle")
-    df_AUCROC.to_pickle("results_aucroc.pickle")
-
+            # evaluation
+            result = utils.metric(y_true = data['y_test'], y_score = score)
+            print(f" results: \n\t AUCROC: \t {result['aucroc']:.4f} \n\t AUCPR: \t {result['aucpr']:.4f}")
+            # save results
+            df_AUCROC.loc[dataset, name] = result['aucroc']
+            df_AUCPR.loc[dataset, name] = result['aucpr']
+        df_AUCPR.to_pickle("results_aucpr.pickle")
+        df_AUCROC.to_pickle("results_aucroc.pickle")
+    else:
+        print("already done with:",dataset)
 print(df_AUCROC)
 print(df_AUCPR)
 df_AUCPR.to_pickle("results_aucpr.pickle")

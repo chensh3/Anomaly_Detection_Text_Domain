@@ -126,5 +126,11 @@ for i in [0, 1, 2, 3]:
 
             dataset = {'X_train': X_train, 'y_train': y_train, 'X_test': X_test, 'y_test': y_test}
 
-            np.save(f"D:/anomaly_data/{i}_{radius}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
+            # np.save(f"D:/anomaly_data/{i}_{radius}_{diff[0]}_{diff[1]}_{'_'.join(classes)}.npz", dataset)
             # diff_difficulty_radius_vec1_vec2_classes.npz
+            # print(f"{i}_{radius}_{diff[0]}_{diff[1]}_{'_'.join(classes)}", len(X_train), len(X_test), y_test.sum())
+            # results_data.loc[f"{i}_{radius}_{diff[0]}_{diff[1]}_{'_'.join(classes)}",["train_len","test_len","anomaly_len"]]= len(X_train), len(X_test), y_test.sum()
+            #
+            # for name in results_data.index:
+            #     results_data.loc[
+            #         name, "radius_diff"] = f"radius: {results_data.loc[name, 'radius']} ; differance: {results_data.loc[name, 'difficulty']}"
