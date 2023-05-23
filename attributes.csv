@@ -1,0 +1,35 @@
+classes,Environment,Adult interests,Aesthetics,Minorities,Scientific,Progress,Casual,Couples,Traditional news
+politics,0,1,0,0,0,0,0,0,1
+wellness,0,1,0,0,0,0,0,1,0
+entertainment,0,0,0,0,0,0,1,0,0
+travel,1,1,1,0,0,0,1,0,0
+parenting,0,1,0,0,0,0,0,1,0
+healthy living tips,1,1,0,0,0,0,1,1,0
+queer voices,0,0,0,1,0,1,0,1,0
+food & drink,1,0,1,0,0,0,1,0,0
+business,0,1,0,0,1,0,0,0,1
+comedy,0,0,0,0,0,0,1,0,0
+sports,0,1,0,0,0,0,0,0,1
+black voices,0,0,0,1,0,1,0,0,0
+home & living,0,1,1,0,0,0,1,1,0
+weddings,0,1,1,0,0,0,0,1,0
+women,0,0,0,1,0,1,0,0,0
+crime,0,1,0,0,1,0,0,0,1
+impact,1,0,0,0,0,0,0,1,0
+divorce,0,1,0,0,0,0,0,1,0
+world news,1,0,0,0,0,0,0,0,1
+media,0,0,0,0,0,0,0,0,0
+weird news,0,0,0,0,0,0,0,0,1
+religion,0,0,0,0,0,0,0,0,0
+style,0,0,1,0,0,0,1,0,0
+science,1,0,0,0,1,1,0,0,0
+tech,1,1,0,0,1,1,0,0,1
+money,0,1,0,0,1,1,0,1,1
+environment,1,0,0,0,0,1,0,0,0
+fifty,0,1,0,0,0,0,0,0,0
+good news,0,0,0,0,0,0,0,0,1
+u.s. news,1,0,0,0,0,0,0,0,1
+arts & culture,1,0,1,0,0,0,1,0,1
+college,0,1,0,0,0,1,0,0,0
+latino voices,0,0,0,1,0,0,0,0,0
+education.,0,1,0,0,1,1,0,0,1
