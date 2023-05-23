@@ -233,7 +233,7 @@ class DataGenerator():
             elif self.dataset in self.dataset_list_nlp_roberta:
                 data = np.load(os.path.join('datasets', 'NLP_by_RoBERTa', self.dataset + '.npz'), allow_pickle = True)
             else:
-                data = np.load(os.path.join('D:/', 'anomaly_data', self.dataset + '.npz.npy'),
+                data = np.load(os.path.join('D:/', 'anomaly_data_test', self.dataset + '.npz.npy'),
                                allow_pickle = True).tolist()
 
             if not "X" in data.keys():
