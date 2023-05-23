@@ -98,7 +98,7 @@ for i, per in tqdm(enumerate(permutations)):
                                               min(len(anomaly_test), len(normal_test))]  #
         dataset_df.to_csv("dataset_df.csv")
         test = pd.concat([anomaly_test, normal_test]).sample(frac = 1).reset_index(drop = True)
-        sup_train=pd.concat([anomaly_train, normal_train]).sample(frac = 1).reset_index(drop = True)
+        sup_train = pd.concat([anomaly_train, normal_train]).sample(frac = 1).reset_index(drop = True)
         y_train = normal_train.loc[:, ["label"]]
         y_test = test.loc[:, ["label"]]
         X_test = test.loc[:, ["embed"]]
@@ -140,7 +140,7 @@ for i, per in tqdm(enumerate(permutations)):
                                               min(len(anomaly_test), len(normal_test))]  #
         dataset_df.to_csv("dataset_df.csv")
         test = pd.concat([anomaly_test, normal_test]).sample(frac = 1).reset_index(drop = True)
-        sup_train=pd.concat([anomaly_train, normal_train]).sample(frac = 1).reset_index(drop = True)
+        sup_train = pd.concat([anomaly_train, normal_train]).sample(frac = 1).reset_index(drop = True)
         y_train = normal_train.loc[:, ["label"]]
         y_test = test.loc[:, ["label"]]
         X_test = test.loc[:, ["embed"]]
