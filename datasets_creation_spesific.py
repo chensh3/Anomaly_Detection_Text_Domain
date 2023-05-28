@@ -35,9 +35,34 @@ print("Done loading data")
 # count = 0
 dataset_df = pd.read_csv("dataset_df.csv")
 
-dataset_df_input = pd.DataFrame(
-    columns = ["Dataset_name", "Anomaly_classes", "Training_sample_size", "Test_sample_size", "Test_balance_size",
-               "Test_length_dev", "Test_precent_dev", "Test_size_balance_dev"])
+dataset_df_input  = pd.DataFrame(
+    columns = ["Dataset_name", "Anomaly_classes", "Training_sample_size",
+               "Test_sample_size",
+               "Test_balance_size",
+               "Test_length_dev",
+               "Anomaly_All_ratio_dev",
+               "Test_size_balance_dev",
+               "Test_All_ratio_dev",
+               "Test_Train_ratio_dev",
+               "Anomaly_test_ratio_dev"])
+
+def save_to_dataframe(dataset_data, db_name, cls_list, a_test, n_test, n_train):
+    test_length = len(a_test) + len(n_test)
+    dataset_length = len(n_train) + test_length
+    ind = np.argmin([len(a_test), len(n_test)])
+    balance_type = "A" if ind == 0 else "N"
+    dataset_data.loc[len(dataset_data), :] = [db_name, cls_list, len(n_train),
+                                              f"{test_length} ({len(a_test) / test_length * 100:.1f}%)",
+                                              f"{min(len(a_test), len(n_test))} {balance_type}",
+                                              test_length,  # Test_length_dev
+                                              len(a_test) / dataset_length * 100,  # Anomaly_All_ratio_dev
+                                              min(len(a_test), len(n_test)),  # Test_size_balance_dev
+                                              test_length / dataset_length * 100,  # Test_All_ratio_dev
+                                              test_length / len(n_train) * 100,  # Test_Train_ratio_dev
+                                              len(a_test) / test_length * 100  # Anomaly_test_ratio_dev
+                                              ]
+
+    return dataset_data
 
 for i in tqdm(range(10)):
     row = dataset_df.iloc[i]
@@ -76,12 +101,8 @@ for i in tqdm(range(10)):
             dataset_length = len(normal_train) + test_length
             indexs = np.argmin([len(anomaly_test), len(normal_test)])
             balance_type = "A" if indexs == 0 else "N"
-            dataset_df_input.loc[len(dataset_df_input), :] = [name, cls, len(normal_train),
-                                                              f"{test_length} ({test_length / dataset_length * 100:.1f}%)",
-                                                              f"{min(len(anomaly_test), len(normal_test))} {balance_type}",
-                                                              test_length,
-                                                              test_length / dataset_length * 100,
-                                                              min(len(anomaly_test), len(normal_test))]  #
+            dataset_df_input = save_to_dataframe(dataset_df_input, name, cls, anomaly_test, normal_test, normal_train)
+
             dataset_df_input.to_csv("dataset_df_input.csv")
             test = pd.concat([anomaly_test, normal_test]).sample(frac = 1).reset_index(drop = True)
             sup_train = pd.concat([anomaly_train, normal_train]).sample(frac = 1).reset_index(drop = True)
@@ -119,12 +140,7 @@ for i in tqdm(range(10)):
             dataset_length = len(normal_train) + test_length
             indexs = np.argmin([len(anomaly_test), len(normal_test)])
             balance_type = "A" if indexs == 0 else "N"
-            dataset_df_input.loc[len(dataset_df_input), :] = [name, cls, len(normal_train),
-                                                              f"{test_length} ({test_length / dataset_length * 100:.1f}%)",
-                                                              f"{min(len(anomaly_test), len(normal_test))} {balance_type}",
-                                                              test_length,
-                                                              test_length / dataset_length * 100,
-                                                              min(len(anomaly_test), len(normal_test))]  #
+            dataset_df_input = save_to_dataframe(dataset_df_input, name, cls, anomaly_test, normal_test, normal_train)
             dataset_df_input.to_csv("dataset_df_input.csv")
             test = pd.concat([anomaly_test, normal_test]).sample(frac = 1).reset_index(drop = True)
             sup_train = pd.concat([anomaly_train, normal_train]).sample(frac = 1).reset_index(drop = True)
