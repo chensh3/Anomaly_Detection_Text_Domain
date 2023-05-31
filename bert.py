@@ -1,13 +1,29 @@
 import torch
 # import transformers
-from transformers import BertTokenizer, BertModel
+from transformers import BertTokenizer, BertModel,BertConfig
 from tqdm.auto import tqdm
+import pandas as pd
+
+
+df = pd.read_json("News_Category_Dataset_v3.json", lines = True)
+df = df[["short_description", "category"]]
+df.category = df.category.str.lower()
+
+df.loc[(df.category == "the worldpost") | (df.category == "worldpost"), 'category'] = "world news"
+df.loc[(df.category == "style & beauty"), 'category'] = "style"
+df.loc[(df.category == "arts") | (df.category == "culture & arts"), 'category'] = "arts & culture"
+df.loc[(df.category == "parents"), 'category'] = "parenting"
+df.loc[(df.category == "taste"), 'category'] = "food & drink"
+df.loc[(df.category == "green"), 'category'] = "environment"
+df.loc[(df.category == "healthy living"), 'category'] = "healthy living tips"
+
+
+
 print("start bert.py")
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 print("tokonizer ready")
-model = BertModel.from_pretrained('bert-base-uncased',
-                                  output_hidden_states=True,  # Whether the model returns all hidden-states.
-                                  )
+conf=BertConfig.from_pretrained('bert-base-uncased',hidden_size=192,output_hidden_states=True)
+model = BertModel(conf)
 print("model started")
 # Put the model in "evaluation" mode, meaning feed-forward operation.
 model.eval()
@@ -48,3 +64,16 @@ def bert_embed(data_raw):
         storage.append((text, sentence_embedding))
         output.append(sentence_embedding)
     return output
+
+
+print(" start embed")
+embeding = bert_embed(df.short_description.to_list())
+print("stop embed")
+df["embed_tensor"] = embeding
+df["embed"]=df.embed_tensor.apply(lambda x: x.numpy())
+df.drop(columns=["embed_tensor"],inplace=True)
+a=pd.DataFrame(df.embed.values.tolist())
+a["short_description"]=df.short_description
+a["category"]=df.category
+# df["embed"]=df.embed_tensor.apply(lambda x: x.numpy())
+a.to_pickle("short_df_all_192.pickle")
