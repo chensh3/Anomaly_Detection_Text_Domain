@@ -44,7 +44,8 @@ dataset_df_input  = pd.DataFrame(
                "Test_size_balance_dev",
                "Test_All_ratio_dev",
                "Test_Train_ratio_dev",
-               "Anomaly_test_ratio_dev"])
+               "Anomaly_test_ratio_dev",
+               "Amount_of_classes"])
 
 def save_to_dataframe(dataset_data, db_name, cls_list, a_test, n_test, n_train):
     test_length = len(a_test) + len(n_test)
@@ -55,11 +56,12 @@ def save_to_dataframe(dataset_data, db_name, cls_list, a_test, n_test, n_train):
                                               f"{test_length} ({len(a_test) / test_length * 100:.1f}%)",
                                               f"{min(len(a_test), len(n_test))} {balance_type}",
                                               test_length,  # Test_length_dev
-                                              len(a_test) / dataset_length * 100,  # Anomaly_All_ratio_dev
+                                              len(a_test) / dataset_length ,  # Anomaly_All_ratio_dev
                                               min(len(a_test), len(n_test)),  # Test_size_balance_dev
-                                              test_length / dataset_length * 100,  # Test_All_ratio_dev
-                                              test_length / len(n_train) * 100,  # Test_Train_ratio_dev
-                                              len(a_test) / test_length * 100  # Anomaly_test_ratio_dev
+                                              test_length / dataset_length ,  # Test_All_ratio_dev
+                                              test_length / len(n_train) ,  # Test_Train_ratio_dev
+                                              len(a_test) / test_length ,  # Anomaly_test_ratio_dev
+                                              len(cls_list)  # Amount_of_classes
                                               ]
 
     return dataset_data
