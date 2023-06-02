@@ -181,7 +181,7 @@ def model_train(train, test):
               fold = CV_FOLD,
               preprocess = False,
               log_experiment = False,
-              use_gpu=True,
+              use_gpu = True,
               # experiment_name = name,
               fix_imbalance = False)
     print(f"setup time: {perf_counter() - start}")
@@ -191,7 +191,7 @@ def model_train(train, test):
     return results, best_model
 
 
-def train_supervised(train, test):
+def train_supervised(name, train, test):
     print("start train function")
     train_data = train.drop(columns = ["short_description", "category"])
     test_data = test.drop(columns = ["short_description", "category"])
@@ -202,6 +202,9 @@ def train_supervised(train, test):
 
     balance_results, _ = model_train(balance_train_df, balance_test_df)
 
+    non_balance_results.to_csv(f"full_test_results/non_balance_{name}.csv")
+    balance_results.to_csv(f"full_test_results/balance_{name}.csv")
+
     balance_info = get_info_from_results(balance_results)
     non_balance_info = get_info_from_results(non_balance_results)
 
@@ -209,7 +212,7 @@ def train_supervised(train, test):
 
 
 count = 0
-for i, per in tqdm(enumerate(permutations[50:51])):
+for i, per in tqdm(enumerate(permutations)):
 
     # print("Working on per of: {per}")
     cls = np.array([])
@@ -238,9 +241,10 @@ for i, per in tqdm(enumerate(permutations[50:51])):
         print(f"Not Enough Samples in Normal-Test, {per}")
         continue
     else:
-        print("prepare dataset")
+
         count += 1
         name = f"{count}_{'_'.join(set(per))}"
+        print("prepare dataset ", name)
         # dataset_df = save_to_dataframe(dataset_df, name, cls, anomaly_test, normal_test, normal_train)
         # dataset_df.to_csv("dataset_df.csv")
         # test = pd.concat([anomaly_test, normal_test]).sample(frac=1).reset_index(drop=True)
@@ -264,8 +268,8 @@ for i, per in tqdm(enumerate(permutations[50:51])):
     normal.loc[:, "label"] = np.zeros(len(normal))
     anomaly.loc[:, "label"] = np.ones(len(anomaly))
 
-    normal_train, normal_test = train_test_split(normal, test_size=test_size)
-    anomaly_train, anomaly_test = train_test_split(anomaly, test_size=test_size)
+    normal_train, normal_test = train_test_split(normal, test_size = test_size)
+    anomaly_train, anomaly_test = train_test_split(anomaly, test_size = test_size)
 
     if len(anomaly_test) <= SAMPLE_LOWER_LIMIT:
         print(f"Not Enough Samples in Anomaly-Test,{i} {per}")
@@ -276,9 +280,10 @@ for i, per in tqdm(enumerate(permutations[50:51])):
     else:
         count += 1
         name = f"{count}_{'_'.join(set(per))}_INVERT"
-        cls = anomaly.category.unique()
-        dataset_df = save_to_dataframe(dataset_df, name, cls, anomaly_test, normal_test, normal_train)
-        dataset_df.to_csv("dataset_df.csv")
+        print("prepare dataset ", name)
+        # cls = anomaly.category.unique()
+        # dataset_df = save_to_dataframe(dataset_df, name, cls, anomaly_test, normal_test, normal_train)
+        # dataset_df.to_csv("dataset_df.csv")
         test = pd.concat([anomaly_test, normal_test])
         sup_train = pd.concat([anomaly_train, normal_train])
         print("go to train models")
