@@ -178,14 +178,14 @@ def model_train(train, test):
     print("start setup")
     start = perf_counter()
     s = setup(train, test_data = test, target = 'label', session_id = SEED, index = False,
-              fold = CV_FOLD,
+              n_jobs = -1,
               preprocess = False,
               log_experiment = False,
               use_gpu = True,
               # experiment_name = name,
               fix_imbalance = False)
     print(f"setup time: {perf_counter() - start}")
-    best_model = compare_models()
+    best_model = compare_models(cross_validation=False)
     print(f"model train time: {perf_counter() - start}")
     results = pull()
     return results, best_model
@@ -252,7 +252,7 @@ for i, per in tqdm(enumerate(permutations)):
         test = pd.concat([anomaly_test, normal_test])
         sup_train = pd.concat([anomaly_train, normal_train])
         print("go to train models")
-        non_balance, balance = train_supervised(sup_train, test)
+        non_balance, balance = train_supervised(name,sup_train, test)
         non_balance_results.loc[len(non_balance_results), :] = np.append(name, non_balance)
         balance_results.loc[len(balance_results), :] = np.append(name, balance)
         non_balance_results.to_csv("non_balance_results.csv")
@@ -287,7 +287,7 @@ for i, per in tqdm(enumerate(permutations)):
         test = pd.concat([anomaly_test, normal_test])
         sup_train = pd.concat([anomaly_train, normal_train])
         print("go to train models")
-        non_balance, balance = train_supervised(sup_train, test)
+        non_balance, balance = train_supervised(name,sup_train, test)
         non_balance_results.loc[len(non_balance_results), :] = np.append(name, non_balance)
         balance_results.loc[len(balance_results), :] = np.append(name, balance)
         non_balance_results.to_csv("non_balance_results.csv")
