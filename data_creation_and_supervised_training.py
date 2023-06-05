@@ -1,3 +1,7 @@
+# scp .\short_df_all_192.pickle project33@192.168.90.203:~/chen/Anomaly_Detection_Text_Domain/short_df_all_192.pickle
+# scp project33@192.168.90.203:~/chen/Anomaly_Detection_Text_Domain/full
+
+#  jupyter notebook --ip=0.0.0.0
 import pandas as pd
 import numpy as np
 from scipy.spatial.distance import hamming
@@ -9,7 +13,11 @@ from pycaret.classification import *
 import pycaret
 from time import perf_counter
 from imblearn.over_sampling import SMOTE
-from sklearn.linear_model import LogisticRegressionCV
+from sklearn.svm import LinearSVC
+from xgboost import XGBClassifier
+from sklearn.linear_model import RidgeClassifier, LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import f1_score, accuracy_score, auc, roc_auc_score
 
 SAMPLE_LOWER_LIMIT = 50
 test_size = 0.3
@@ -61,7 +69,11 @@ non_balance_results = pd.DataFrame(
                "f1_max",
                "f1_min_name",
                "f1_max_name",
-
+               "setup_time",
+               "train_time",
+               "pred_time",
+               "train_len",
+               "test_len"
                ])
 balance_results = pd.DataFrame(
     columns = ["Dataset_name",
@@ -83,7 +95,11 @@ balance_results = pd.DataFrame(
                "f1_max",
                "f1_min_name",
                "f1_max_name",
-
+               "setup_time",
+               "train_time",
+               "pred_time",
+               "train_len",
+               "test_len"
                ])
 
 
@@ -170,25 +186,114 @@ def get_info_from_results(results):
                                 results.index[results[col].argmin()],
                                 results.index[results[col].argmax()]]
                          )
-
+    info = np.append(info, [results["setup_time"][0],
+                            results["train_time"].sum(),
+                            results["pred_time"][0],
+                            results["train_len"][0],
+                            results["test_len"][0]])
     return info
 
 
-def model_train(train, test):
+# x_test=test.drop(column="label")
+#     y_test=test.label
+def create_models():
+    xgboost_model = XGBClassifier()
+
+    rdgclassifier = RidgeClassifier()
+
+    logreg = LogisticRegression()
+
+    rf = RandomForestClassifier()
+
+    svm_l = LinearSVC()
+
+    return [xgboost_model, rdgclassifier, logreg, rf, svm_l]
+
+
+def train_model(model_list, train):
+    x_train = train.drop(columns = "label")
+    y_train = train.label
+    new_list = []
+    training_time_list = []
+    for model in tqdm(model_list, desc = "Training models"):
+        start = perf_counter()
+        model.fit(x_train, y_train)
+        train_time = perf_counter() - start
+        new_list.append(model)
+        training_time_list.append(train_time)
+    return new_list, training_time_list
+
+
+def test_models(model_list, test):
+    results = pd.DataFrame(columns = ["Model", "Accuracy", "AUC", "F1"])
+    x_test = test.drop(columns = "label")
+    y_test = test.label
+    for md in tqdm(model_list, desc = "Testing models"):
+        pred = md.predict(x_test)
+        f1 = f1_score(y_test, pred)
+        acc = accuracy_score(y_test, pred)
+        auc_score = roc_auc_score(y_test, pred)
+        results.loc[len(results)] = [str(type(md)).split(".")[-1].split("'")[0], acc, auc_score, f1]
+    return results
+
+
+def train_all_models(train, test):
     print("start setup")
     start = perf_counter()
-    s = setup(train, test_data = test, target = 'label', session_id = SEED, index = False,
-              n_jobs = -1,
-              preprocess = False,
-              log_experiment = False,
-              use_gpu = True,
-              # experiment_name = name,
-              fix_imbalance = False)
-    print(f"setup time: {perf_counter() - start}")
-    best_model = compare_models(cross_validation=False)
-    print(f"model train time: {perf_counter() - start}")
-    results = pull()
-    return results, best_model
+    # s = setup(train, test_data = test, target = 'label', session_id = SEED, index = False,
+    #           n_jobs = -1,
+    #           preprocess = False,
+    #           log_experiment = False,
+    #           use_gpu = True,
+    #           # experiment_name = name,
+    #           fix_imbalance = False)
+
+    model_list = create_models()
+
+    setup_time = perf_counter() - start
+
+    print(f"\nsetup time: {setup_time}")
+    start = perf_counter()
+
+    model_list, train_time = train_model(model_list, train)
+    print(f"\ntraining time: {perf_counter() - start}")
+    start = perf_counter()
+    results = test_models(model_list, test)
+    pred_time = perf_counter() - start
+    print(f"\npred+results time: {pred_time}")
+    results["setup_time"] = setup_time
+    results["train_time"] = train_time
+    results["pred_time"] = pred_time
+    results["train_len"] = len(train)
+    results["test_len"] = len(test)
+    return results
+    # # list_models = ["qda", "lightgbm", "ridge", "lda", "lr", "xgboost", "gbc", "rf", "et", "svm", "ada", "knn", "nb",
+    # #                "dt", "dummy"]
+    # # list_models =['lightgbm', 'ridge', 'lr', 'xgboost', 'rf', 'svm', 'knn', 'dt']
+    # # list_models =[ 'ridge', 'lr', 'xgboost', 'rf', 'svm', 'knn', 'dt']
+    # # timing=pull()["TT (sec)"]
+    # results = pd.DataFrame(columns = ["Model", "Accuracy", "AUC", "Recall", "Prec.", "F1", "Kappa", "MCC"])
+    # last_model = ""
+    # for md in list_models:
+    #     model = create_model(md)
+    #     try:
+    #         predict_model(model, data = ts)
+    #     except:
+    #         list_models.remove(md)
+    #         print(f"\n\nremoved {md}\n\n")
+    #         continue
+    #     time.sleep(1)
+    #     result = pull(pop = True)
+    #     if result.Model.values[0] == last_model:
+    #         print(f"\n\nPredict model didn't work {md}\n\n")
+    #     last_model = result.Model.values[0]
+    #
+    #     results.loc[len(results)] = result.loc[0]
+    #
+    # results["train_time"] = timing
+    # print(f"model train time: {perf_counter() - start}")
+
+    # return results
 
 
 def train_supervised(name, train, test):
@@ -197,10 +302,10 @@ def train_supervised(name, train, test):
     test_data = test.drop(columns = ["short_description", "category"])
     balance_train_df = balance_train(train_data)
 
-    non_balance_results, _ = model_train(balance_train_df, test_data)
+    non_balance_results = train_all_models(balance_train_df, test_data)
     balance_test_df = balance_test(test_data)
 
-    balance_results, _ = model_train(balance_train_df, balance_test_df)
+    balance_results = train_all_models(balance_train_df, balance_test_df)
 
     non_balance_results.to_csv(f"full_test_results/non_balance_{name}.csv")
     balance_results.to_csv(f"full_test_results/balance_{name}.csv")
@@ -244,7 +349,7 @@ for i, per in tqdm(enumerate(permutations)):
 
         count += 1
         name = f"{count}_{'_'.join(set(per))}"
-        print("prepare dataset ", name)
+        print("\nprepare dataset ", name)
         # dataset_df = save_to_dataframe(dataset_df, name, cls, anomaly_test, normal_test, normal_train)
         # dataset_df.to_csv("dataset_df.csv")
         # test = pd.concat([anomaly_test, normal_test]).sample(frac=1).reset_index(drop=True)
@@ -252,7 +357,7 @@ for i, per in tqdm(enumerate(permutations)):
         test = pd.concat([anomaly_test, normal_test])
         sup_train = pd.concat([anomaly_train, normal_train])
         print("go to train models")
-        non_balance, balance = train_supervised(name,sup_train, test)
+        non_balance, balance = train_supervised(name, sup_train, test)
         non_balance_results.loc[len(non_balance_results), :] = np.append(name, non_balance)
         balance_results.loc[len(balance_results), :] = np.append(name, balance)
         non_balance_results.to_csv("non_balance_results.csv")
@@ -280,14 +385,14 @@ for i, per in tqdm(enumerate(permutations)):
     else:
         count += 1
         name = f"{count}_{'_'.join(set(per))}_INVERT"
-        print("prepare dataset ", name)
+        print("\nprepare dataset ", name)
         # cls = anomaly.category.unique()
         # dataset_df = save_to_dataframe(dataset_df, name, cls, anomaly_test, normal_test, normal_train)
         # dataset_df.to_csv("dataset_df.csv")
         test = pd.concat([anomaly_test, normal_test])
         sup_train = pd.concat([anomaly_train, normal_train])
         print("go to train models")
-        non_balance, balance = train_supervised(name,sup_train, test)
+        non_balance, balance = train_supervised(name, sup_train, test)
         non_balance_results.loc[len(non_balance_results), :] = np.append(name, non_balance)
         balance_results.loc[len(balance_results), :] = np.append(name, balance)
         non_balance_results.to_csv("non_balance_results.csv")
