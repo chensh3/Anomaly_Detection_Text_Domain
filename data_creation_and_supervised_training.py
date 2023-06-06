@@ -317,7 +317,8 @@ for i, per in tqdm(enumerate(permutations)):
 
     anomaly = pd.DataFrame(columns = df.columns)
     for cls_1 in cls:
-        anomaly = anomaly.append(data.loc[(data.category == cls_1), :])
+        # anomaly = anomaly.append(data.loc[(data.category == cls_1), :])
+        anomaly = pd.concat([anomaly, data.loc[(data.category == cls_1), :]])
 
     temp = anomaly.copy()  # For invert
     anomaly.loc[:, "label"] = np.ones(len(anomaly))
