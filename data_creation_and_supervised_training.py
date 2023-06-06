@@ -4,20 +4,21 @@
 #  jupyter notebook --ip=0.0.0.0
 import pandas as pd
 import numpy as np
-from scipy.spatial.distance import hamming
+# from scipy.spatial.distance import hamming
 import itertools
 from tqdm.auto import tqdm
 from sklearn.model_selection import train_test_split
-from pycaret.classification import ClassificationExperiment
-from pycaret.classification import *
-import pycaret
+# from pycaret.classification import ClassificationExperiment
+# from pycaret.classification import *
+# import pycaret
 from time import perf_counter
 from imblearn.over_sampling import SMOTE
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
 from xgboost import XGBClassifier
 from sklearn.linear_model import RidgeClassifier, LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import f1_score, accuracy_score, auc, roc_auc_score
+from sklearn.metrics import f1_score, accuracy_score, roc_auc_score
+import lightgbm as lgb
 
 SAMPLE_LOWER_LIMIT = 50
 test_size = 0.3
@@ -143,6 +144,13 @@ def balance_train(data):
     len_anomalies = int(data.label.sum())
     len_normal = len(data) - len_anomalies
     min_ind = np.argmin([len_normal, len_anomalies])
+    if [len_normal, len_anomalies][min_ind] > 12000:  # TODO delete after experiment end
+
+        a = data[data.label == 0].sample(12000)
+        b = data[data.label == 1].sample(12000)
+        balance_train = pd.concat([a, b])
+        return balance_train
+
     if [len_normal, len_anomalies][min_ind] < 1000:
         return None
     elif [len_normal, len_anomalies][min_ind] > 10000:
@@ -188,7 +196,7 @@ def get_info_from_results(results):
                          )
     info = np.append(info, [results["setup_time"][0],
                             results["train_time"].sum(),
-                            results["pred_time"][0],
+                            results["pred_time"].sum(),
                             results["train_len"][0],
                             results["test_len"][0]])
     return info
@@ -197,17 +205,22 @@ def get_info_from_results(results):
 # x_test=test.drop(column="label")
 #     y_test=test.label
 def create_models():
-    xgboost_model = XGBClassifier()
+    # xgboost_model = XGBClassifier()
 
     rdgclassifier = RidgeClassifier()
 
-    logreg = LogisticRegression()
+    logreg = LogisticRegression(max_iter = 10000)
 
-    rf = RandomForestClassifier()
+    # rf = RandomForestClassifier()
 
-    svm_l = LinearSVC()
+    # svm_l = LinearSVC()
 
-    return [xgboost_model, rdgclassifier, logreg, rf, svm_l]
+    # svm = SVC()
+
+    lightgbm = lgb.LGBMClassifier()
+
+    # return [xgboost_model, rdgclassifier, logreg, rf, svm_l, svm, lightgbm]
+    return [rdgclassifier, logreg, lightgbm]
 
 
 def train_model(model_list, train):
@@ -228,72 +241,45 @@ def test_models(model_list, test):
     results = pd.DataFrame(columns = ["Model", "Accuracy", "AUC", "F1"])
     x_test = test.drop(columns = "label")
     y_test = test.label
+    testing_time_list = []
+
     for md in tqdm(model_list, desc = "Testing models"):
+        start = perf_counter()
         pred = md.predict(x_test)
         f1 = f1_score(y_test, pred)
         acc = accuracy_score(y_test, pred)
         auc_score = roc_auc_score(y_test, pred)
+        train_time = perf_counter() - start
+        testing_time_list.append(train_time)
         results.loc[len(results)] = [str(type(md)).split(".")[-1].split("'")[0], acc, auc_score, f1]
-    return results
+    return results, testing_time_list
 
 
-def train_all_models(train, test):
-    print("start setup")
+def train_all_models(train, test, second_test = False, data = None):
+    if not second_test:
+        print("start setup")
+        start = perf_counter()
+        model_list = create_models()
+        setup_time = perf_counter() - start
+        print(f"\nsetup time: {setup_time}")
+
+        start = perf_counter()
+        model_list, train_time = train_model(model_list, train)
+        print(f"\ntraining time: {perf_counter() - start}")
+    else:
+        model_list = data[0]
+        setup_time = data[1]
+        train_time = data[2]
+
     start = perf_counter()
-    # s = setup(train, test_data = test, target = 'label', session_id = SEED, index = False,
-    #           n_jobs = -1,
-    #           preprocess = False,
-    #           log_experiment = False,
-    #           use_gpu = True,
-    #           # experiment_name = name,
-    #           fix_imbalance = False)
-
-    model_list = create_models()
-
-    setup_time = perf_counter() - start
-
-    print(f"\nsetup time: {setup_time}")
-    start = perf_counter()
-
-    model_list, train_time = train_model(model_list, train)
-    print(f"\ntraining time: {perf_counter() - start}")
-    start = perf_counter()
-    results = test_models(model_list, test)
-    pred_time = perf_counter() - start
-    print(f"\npred+results time: {pred_time}")
+    results, pred_time = test_models(model_list, test)
+    print(f"\npred+results time: {perf_counter() - start}")
     results["setup_time"] = setup_time
     results["train_time"] = train_time
     results["pred_time"] = pred_time
     results["train_len"] = len(train)
     results["test_len"] = len(test)
-    return results
-    # # list_models = ["qda", "lightgbm", "ridge", "lda", "lr", "xgboost", "gbc", "rf", "et", "svm", "ada", "knn", "nb",
-    # #                "dt", "dummy"]
-    # # list_models =['lightgbm', 'ridge', 'lr', 'xgboost', 'rf', 'svm', 'knn', 'dt']
-    # # list_models =[ 'ridge', 'lr', 'xgboost', 'rf', 'svm', 'knn', 'dt']
-    # # timing=pull()["TT (sec)"]
-    # results = pd.DataFrame(columns = ["Model", "Accuracy", "AUC", "Recall", "Prec.", "F1", "Kappa", "MCC"])
-    # last_model = ""
-    # for md in list_models:
-    #     model = create_model(md)
-    #     try:
-    #         predict_model(model, data = ts)
-    #     except:
-    #         list_models.remove(md)
-    #         print(f"\n\nremoved {md}\n\n")
-    #         continue
-    #     time.sleep(1)
-    #     result = pull(pop = True)
-    #     if result.Model.values[0] == last_model:
-    #         print(f"\n\nPredict model didn't work {md}\n\n")
-    #     last_model = result.Model.values[0]
-    #
-    #     results.loc[len(results)] = result.loc[0]
-    #
-    # results["train_time"] = timing
-    # print(f"model train time: {perf_counter() - start}")
-
-    # return results
+    return results, [model_list, setup_time, train_time]
 
 
 def train_supervised(name, train, test):
@@ -302,10 +288,10 @@ def train_supervised(name, train, test):
     test_data = test.drop(columns = ["short_description", "category"])
     balance_train_df = balance_train(train_data)
 
-    non_balance_results = train_all_models(balance_train_df, test_data)
+    non_balance_results, data = train_all_models(balance_train_df, test_data)
     balance_test_df = balance_test(test_data)
 
-    balance_results = train_all_models(balance_train_df, balance_test_df)
+    balance_results, _ = train_all_models(balance_train_df, balance_test_df, second_test = True, data = data)
 
     non_balance_results.to_csv(f"full_test_results/non_balance_{name}.csv")
     balance_results.to_csv(f"full_test_results/balance_{name}.csv")
