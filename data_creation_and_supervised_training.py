@@ -28,7 +28,7 @@ attributes = pd.read_excel("attributes.xlsx")
 attributes.rename(columns = {"Unnamed: 0": "classes"}, inplace = True)
 num_classes = 34
 attributes.set_index("classes", inplace = True)
-
+np.random.seed(42)
 classes = pd.DataFrame(np.zeros((num_classes, num_classes)), index = attributes.index, columns = attributes.index,
                        dtype = int)
 for i in range(num_classes):
@@ -128,11 +128,11 @@ def balance_test(test):
     len_normal = len(test) - len_anomalies
     min_ind = np.argmin([len_normal, len_anomalies])
     if min_ind == 1:
-        normal = test[test.label == 0].sample(len_anomalies)
+        normal = test[test.label == 0].sample(len_anomalies,random_state=42)
         anomaly = test[test.label == 1]
 
     else:
-        anomaly = test[test.label == 1].sample(len_normal)
+        anomaly = test[test.label == 1].sample(len_normal,random_state=42)
         normal = test[test.label == 0]
     assert len(normal) == len(anomaly) == [len_normal, len_anomalies][min_ind], \
         f"Wrong length: {len(normal), len(anomaly), [len_normal, len_anomalies][min_ind]}"
@@ -146,20 +146,20 @@ def balance_train(data):
     min_ind = np.argmin([len_normal, len_anomalies])
     if [len_normal, len_anomalies][min_ind] > 12000:  # TODO delete after experiment end
 
-        a = data[data.label == 0].sample(12000)
-        b = data[data.label == 1].sample(12000)
+        a = data[data.label == 0].sample(12000,random_state=42)
+        b = data[data.label == 1].sample(12000,random_state=42)
         balance_train = pd.concat([a, b])
         return balance_train
 
     if [len_normal, len_anomalies][min_ind] < 1000:
         return None
     elif [len_normal, len_anomalies][min_ind] > 10000:
-        a = data[data.label == int(not min_ind)].sample([len_normal, len_anomalies][min_ind])
+        a = data[data.label == int(not min_ind)].sample([len_normal, len_anomalies][min_ind],random_state=42)
         b = data[data.label == min_ind]
         balance_train = pd.concat([a, b])
     else:
         if min_ind == 1:
-            oversample = SMOTE()
+            oversample = SMOTE(n_jobs=-1,random_state=42)
             if len_normal / len_anomalies <= 1.3:
                 balance_train, y = oversample.fit_resample(data.drop(columns = "label"), data.label)
                 balance_train["label"] = y
@@ -170,7 +170,7 @@ def balance_train(data):
                 balance_train, y = oversample.fit_resample(balance_train.drop(columns = "label"), balance_train.label)
                 balance_train["label"] = y
         else:
-            oversample = SMOTE()
+            oversample = SMOTE(n_jobs=-1,random_state=42)
             if len_anomalies / len_normal <= 1.3:
                 balance_train, y = oversample.fit_resample(data.drop(columns = "label"), data.label)
                 balance_train["label"] = y
@@ -207,9 +207,9 @@ def get_info_from_results(results):
 def create_models():
     # xgboost_model = XGBClassifier()
 
-    rdgclassifier = RidgeClassifier()
+    rdgclassifier = RidgeClassifier(random_state = 42)
 
-    logreg = LogisticRegression(max_iter = 10000)
+    logreg = LogisticRegression(max_iter = 10000, random_state = 42, n_jobs = -1)
 
     # rf = RandomForestClassifier()
 
@@ -217,7 +217,7 @@ def create_models():
 
     # svm = SVC()
 
-    lightgbm = lgb.LGBMClassifier()
+    lightgbm = lgb.LGBMClassifier(random_state = 42, n_jobs = -1)
 
     # return [xgboost_model, rdgclassifier, logreg, rf, svm_l, svm, lightgbm]
     return [rdgclassifier, logreg, lightgbm]
@@ -322,8 +322,8 @@ for i, per in tqdm(enumerate(permutations)):
     anomaly.loc[:, "label"] = np.ones(len(anomaly))
     normal = data.drop(anomaly.index)
     normal.loc[:, "label"] = np.zeros(len(normal))
-    normal_train, normal_test = train_test_split(normal, test_size = test_size)
-    anomaly_train, anomaly_test = train_test_split(anomaly, test_size = test_size)
+    normal_train, normal_test = train_test_split(normal, test_size = test_size,random_state=42)
+    anomaly_train, anomaly_test = train_test_split(anomaly, test_size = test_size,random_state=42)
 
     if len(anomaly_test) <= SAMPLE_LOWER_LIMIT:
         print(f"Not Enough Samples in Anomaly-Test, {per}")
@@ -359,8 +359,8 @@ for i, per in tqdm(enumerate(permutations)):
     normal.loc[:, "label"] = np.zeros(len(normal))
     anomaly.loc[:, "label"] = np.ones(len(anomaly))
 
-    normal_train, normal_test = train_test_split(normal, test_size = test_size)
-    anomaly_train, anomaly_test = train_test_split(anomaly, test_size = test_size)
+    normal_train, normal_test = train_test_split(normal, test_size = test_size,random_state=42)
+    anomaly_train, anomaly_test = train_test_split(anomaly, test_size = test_size,random_state=42)
 
     if len(anomaly_test) <= SAMPLE_LOWER_LIMIT:
         print(f"Not Enough Samples in Anomaly-Test,{i} {per}")
