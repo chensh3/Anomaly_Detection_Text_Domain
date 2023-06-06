@@ -287,7 +287,8 @@ def train_supervised(name, train, test):
     train_data = train.drop(columns = ["short_description", "category"])
     test_data = test.drop(columns = ["short_description", "category"])
     balance_train_df = balance_train(train_data)
-
+    if balance_train_df is None:
+        return np.array([None]*23),np.array([None]*23)
     non_balance_results, data = train_all_models(balance_train_df, test_data)
     balance_test_df = balance_test(test_data)
 
