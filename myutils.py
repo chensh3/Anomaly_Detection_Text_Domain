@@ -7,7 +7,7 @@ import tensorflow as tf
 
 # metric
 from sklearn.metrics import roc_auc_score, average_precision_score
-
+from sklearn.metrics import f1_score, accuracy_score
 # plot
 import matplotlib.pyplot as plt
 
@@ -73,8 +73,11 @@ class Utils():
     def metric(self, y_true, y_score, pos_label=1):
         aucroc = roc_auc_score(y_true=y_true, y_score=y_score)
         aucpr = average_precision_score(y_true=y_true, y_score=y_score, pos_label=1)
+        f1 = f1_score(y_true, y_score)
+        acc = accuracy_score(y_true, y_score)
 
-        return {'aucroc':aucroc, 'aucpr':aucpr}
+
+        return {'aucroc':aucroc, 'aucpr':aucpr, 'f1':f1, 'acc':acc}
 
     # resampling function
     def sampler(self, X_train, y_train, batch_size):

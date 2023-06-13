@@ -5,3 +5,11 @@ __pycache__
 .idea/
 .vscode/
 .datasets/
+/datasets/
+/figs/
+/full_test_results_train/
+/full_test_results/
+/Final_Results_supervised/
+/between_class_check/
+/datasets/
+/actual_runs_results/

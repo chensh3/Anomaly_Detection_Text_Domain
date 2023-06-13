@@ -208,7 +208,7 @@ class DataGenerator():
 
         return X, y
 
-    def generator(self, X = None, y = None, minmax = True,
+    def generator(self,dataset=None, X = None, y = None, minmax = True,
                   la = None, at_least_one_labeled = False,
                   realistic_synthetic_mode = None, alpha: int = 5, percentage: float = 0.1,
                   noise_type = None, duplicate_times: int = 2, contam_ratio = 1.00, noise_ratio: float = 0.05):
@@ -222,7 +222,13 @@ class DataGenerator():
 
         # load dataset
         if self.dataset is None:
-            assert X is not None and y is not None, "For customized dataset, you should provide the X and y!"
+            y_train = data["y_train"].values
+            y_test = data["y_test"].values
+            x_train = data["x_train"].values
+            x_test = data["x_test"].values
+            return {'x_train': X_train, 'y_train': y_train, 'x_test': X_test, 'y_test': y_test}
+
+            # assert X is not None and y is not None, "For customized dataset, you should provide the X and y!"
         else:
             if self.dataset in self.dataset_list_classical:
                 data = np.load(os.path.join('datasets', 'Classical', self.dataset + '.npz'), allow_pickle = True)
