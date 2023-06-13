@@ -202,7 +202,7 @@ class PYOD():
 
         return best_param
 
-    def fit(self, X_train, y_train, ratio=None):
+    def fit(self, X_train, y_train=None, ratio=None):
         if self.model_name in ['AutoEncoder', 'VAE']:
             # only use the normal samples to fit the model
             idx_n = np.where(y_train==0)[0]
@@ -210,7 +210,9 @@ class PYOD():
             y_train = y_train[idx_n]
 
         # selecting the best hyper-parameters of unsupervised model for fair comparison (if labeled anomalies is available)
-        if sum(y_train) > 0 and self.tune:
+        if y_train is None:
+            best_param = None
+        elif sum(y_train) > 0 and self.tune:
             assert ratio is not None
             best_param = self.grid_search(X_train, y_train, ratio)
         else:
