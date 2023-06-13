@@ -88,7 +88,7 @@ def train_ad(train_data, test_data):
 
             # training, for unsupervised models the y label will be discarded
             # model = model.fit(X_train = train_data.drop(columns = "label").values, y_train = train_data[ "label"].values)
-            model = model.fit(X_train = train_data.drop(columns = "label").values, y_train = train_data[ "label"].values)
+            model = model.fit(X_train = train_data.drop(columns = "label").values)
 
 
             # output predicted anomaly score on testing set
