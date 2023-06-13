@@ -20,7 +20,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import f1_score, accuracy_score, roc_auc_score
 import lightgbm as lgb
 
-from data_generator import DataGenerator
+# from data_generator import DataGenerator
 from myutils import Utils
 from baseline.PyOD import PYOD
 
@@ -45,7 +45,7 @@ print("Done loading data")
 
 permutations = list(itertools.combinations_with_replacement(attributes.columns, 2))
 
-datagenerator = DataGenerator()  # data generator
+# datagenerator = DataGenerator()  # data generator
 utils = Utils()  # utils function
 
 model_dict = {'COPOD': PYOD}
@@ -88,7 +88,7 @@ def train_ad(train_data, test_data):
 
             # training, for unsupervised models the y label will be discarded
             # model = model.fit(X_train = train_data.drop(columns = "label").values, y_train = train_data[ "label"].values)
-            model = model.fit(X_train = train_data.drop(columns = "label").values[:300], y_train = train_data[ "label"].values[:300])
+            model = model.fit(X_train = train_data.drop(columns = "label").values, y_train = train_data[ "label"].values)
 
 
             # output predicted anomaly score on testing set
@@ -105,7 +105,7 @@ def train_ad(train_data, test_data):
 
 
 count = 0
-for i, per in tqdm(enumerate(permutations[:473])):
+for i, per in tqdm(enumerate(permutations)):
 
     # print("Working on per of: {per}")
     cls = np.array([])
