@@ -48,7 +48,7 @@ permutations = list(itertools.combinations_with_replacement(attributes.columns, 
 # datagenerator = DataGenerator()  # data generator
 utils = Utils()  # utils function
 
-model_dict = {'COPOD': PYOD}
+model_dict = {'KNN': PYOD}
 # model_dict = {'COPOD': PYOD, 'DeepSVDD': PYOD}  # WORKS
 num_models = len(model_dict.keys())
 ad_results = pd.DataFrame(
