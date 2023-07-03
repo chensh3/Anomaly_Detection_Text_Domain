@@ -25,7 +25,7 @@ import optuna
 # datagenerator = DataGenerator()  # data generator
 utils = Utils()  # utils function
 
-# model_dict = {'IForest': PYOD}
+model_dict = {'IForest': PYOD}
 # model_dict = {'COPOD': PYOD, 'DeepSVDD': PYOD}  # WORKS
 num_models = len(model_dict.keys())
 ad_results = pd.DataFrame(
@@ -109,6 +109,7 @@ def train_and_evaluate(model):
 
     return f1
 
+results=pd.DataFrame(columnms=["f1",'n_layers','hidden_neurons1','hidden_neurons2','hidden_neurons3','hidden_neurons4','dropout_rate','contamination','preprocessing'])
 
 def objective(trial):
     params = {
@@ -125,9 +126,9 @@ def objective(trial):
     model = build_model(params)
 
     f1 = train_and_evaluate(model)
-
+    results.loc[len(results)]=[f1,params["n_layers"],params["hidden_neurons1"],params["hidden_neurons2"],params["hidden_neurons3"],params["hidden_neurons4"],params["dropout_rate"],params["contamination"],params["preprocessing"]]
+    results.to_csv("results_optimize_dsvdd.csv")
     return f1
-
 
 EPOCHS = 100
 
