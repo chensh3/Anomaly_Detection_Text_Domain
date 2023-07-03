@@ -109,7 +109,7 @@ def train_and_evaluate(model):
 
     return f1
 
-results=pd.DataFrame(columnms=["f1",'n_layers','hidden_neurons1','hidden_neurons2','hidden_neurons3','hidden_neurons4','dropout_rate','contamination','preprocessing'])
+results=pd.DataFrame(columns=["f1",'n_layers','hidden_neurons1','hidden_neurons2','hidden_neurons3','hidden_neurons4','dropout_rate','contamination','preprocessing'])
 
 def objective(trial):
     params = {
